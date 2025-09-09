@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binance Booster 奖励解锁日历</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0b0e11 0%, #1a1d29 50%, #2d1b69 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+
+
+        .calendar-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: linear-gradient(145deg, #1e2329 0%, #2b3139 100%);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 
+                        0 0 0 1px rgba(240, 185, 11, 0.2);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        .calendar-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #f0b90b, #0ecb81, #f0b90b);
+        }
+
+        .calendar-header {
+            background: linear-gradient(135deg, #f0b90b 0%, #f8d12f 100%);
+            padding: 24px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .header-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #000;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 12px;
+        }
+
+        .second-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .month-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .author-link {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000;
+            text-decoration: none;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .author-link:hover {
+            opacity: 1;
+            transform: translateY(-1px);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .nav-button {
+            background: linear-gradient(135deg, #0ecb81 0%, #1dd1a1 100%);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(14, 203, 129, 0.3);
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(14, 203, 129, 0.5);
+        }
+
+        .nav-button:active {
+            transform: translateY(0);
+        }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background: linear-gradient(135deg, #2b3139 0%, #3c4043 100%);
+        }
+
+        .weekday {
+            padding: 20px 8px;
+            text-align: center;
+            font-weight: bold;
+            color: #f0b90b;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background: #1e2329;
+            gap: 2px;
+            padding: 2px;
+        }
+
+        .calendar-day {
+            min-height: 100px;
+            padding: 12px;
+            position: relative;
+            background: #2b3139;
+            border-radius: 12px;
+        }
+
+        .day-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .other-month {
+            background: #181a20;
+            opacity: 0.3;
+        }
+
+        .other-month .day-number {
+            color: #474d57;
+        }
+
+        .unlock-event {
+            background: linear-gradient(135deg, #0ecb81 0%, #1dd1a1 100%);
+            box-shadow: 0 0 30px rgba(14, 203, 129, 0.6);
+            transform: scale(1.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .unlock-event::before {
+            content: '🎁';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 16px;
+        }
+
+        .unlock-event .day-number {
+            color: #000;
+            font-size: 24px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .unlock-info {
+            position: relative;
+            z-index: 2;
+        }
+
+        .token-symbol {
+            display: inline-block;
+            background: linear-gradient(135deg, #f0b90b 0%, #f8d12f 100%);
+            padding: 6px 12px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            font-weight: bold;
+            font-size: 14px;
+            color: #000;
+            border: 2px solid rgba(255,255,255,0.5);
+            box-shadow: 0 2px 8px rgba(240, 185, 11, 0.3);
+        }
+
+        .unlock-round {
+            font-size: 12px;
+            color: #000;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .unlock-period {
+            font-size: 11px;
+            color: #000;
+            font-weight: 500;
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+
+        .today {
+            border: 4px solid #f0b90b;
+            box-shadow: 0 0 25px rgba(240, 185, 11, 0.8), 
+                        0 0 40px rgba(240, 185, 11, 0.4);
+            position: relative;
+            animation: todayPulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes todayPulse {
+            0% {
+                box-shadow: 0 0 25px rgba(240, 185, 11, 0.8), 
+                           0 0 40px rgba(240, 185, 11, 0.4);
+            }
+            100% {
+                box-shadow: 0 0 35px rgba(240, 185, 11, 1), 
+                           0 0 60px rgba(240, 185, 11, 0.6);
+            }
+        }
+
+        .today::after {
+            content: 'TODAY';
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            background: linear-gradient(135deg, #f0b90b 0%, #f8d12f 100%);
+            color: #000;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 10px;
+            border: 2px solid rgba(255,255,255,0.5);
+            box-shadow: 0 4px 12px rgba(240, 185, 11, 0.6);
+            z-index: 3;
+            letter-spacing: 0.5px;
+        }
+
+        .today.unlock-event {
+            border: 4px solid #f0b90b;
+            box-shadow: 0 0 35px rgba(240, 185, 11, 0.9), 
+                        0 0 50px rgba(14, 203, 129, 0.8);
+            animation: todayUnlockPulse 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes todayUnlockPulse {
+            0% {
+                box-shadow: 0 0 35px rgba(240, 185, 11, 0.9), 
+                           0 0 50px rgba(14, 203, 129, 0.8);
+            }
+            100% {
+                box-shadow: 0 0 50px rgba(240, 185, 11, 1), 
+                           0 0 70px rgba(14, 203, 129, 1);
+            }
+        }
+
+        .today.unlock-event::after {
+            content: 'UNLOCK TODAY';
+            font-size: 11px;
+            padding: 3px 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .notes-section {
+            background: #1e2329;
+            padding: 20px 24px;
+        }
+
+        .note-item {
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #f0b90b;
+            line-height: 1.5;
+        }
+
+        .token-name {
+            font-weight: bold;
+            color: #0ecb81;
+        }
+
+        .profit-link {
+            color: #f0b90b;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+            margin-left: 8px;
+            padding: 2px 6px;
+            border: 1px solid rgba(240, 185, 11, 0.3);
+            border-radius: 4px;
+            background: rgba(240, 185, 11, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .profit-link:hover {
+            color: #000;
+            background: linear-gradient(135deg, #f0b90b 0%, #f8d12f 100%);
+            border-color: #f0b90b;
+            text-decoration: none;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(240, 185, 11, 0.3);
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .calendar-container {
+                max-width: 100%;
+                margin: 0;
+                border-radius: 16px;
+            }
+
+            .calendar-header {
+                padding: 16px;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .nav-button {
+                padding: 8px 12px;
+                font-size: 14px;
+                min-width: 80px;
+            }
+
+            .header-title {
+                font-size: 18px;
+                margin-bottom: 8px;
+            }
+
+            .second-row {
+                max-width: 100%;
+                gap: 10px;
+            }
+
+            .month-title {
+                font-size: 16px;
+            }
+
+            .author-link {
+                font-size: 14px;
+            }
+
+            .weekday {
+                padding: 12px 4px;
+                font-size: 14px;
+                letter-spacing: 1px;
+            }
+
+            .calendar-day {
+                min-height: 80px;
+                padding: 8px;
+            }
+
+            .day-number {
+                font-size: 18px;
+                margin-bottom: 6px;
+            }
+
+            .unlock-event .day-number {
+                font-size: 20px;
+            }
+
+            .token-symbol {
+                padding: 4px 8px;
+                font-size: 12px;
+                margin-bottom: 2px;
+            }
+
+            .unlock-round {
+                font-size: 10px;
+            }
+
+            .unlock-period {
+                font-size: 9px;
+                margin-top: 1px;
+            }
+
+            .today::after {
+                font-size: 9px;
+                padding: 2px 5px;
+                top: -8px;
+                right: -8px;
+            }
+
+            .today.unlock-event::after {
+                font-size: 8px;
+                padding: 2px 4px;
+            }
+
+            .notes-section {
+                padding: 16px;
+            }
+
+            .note-item {
+                font-size: 13px;
+                margin-bottom: 10px;
+            }
+
+            .profit-link {
+                font-size: 11px;
+                padding: 1px 4px;
+                margin-left: 6px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .calendar-header {
+                padding: 12px;
+            }
+
+            .header-title {
+                font-size: 16px;
+            }
+
+            .second-row {
+                flex-direction: column;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .month-title {
+                font-size: 15px;
+            }
+
+            .author-link {
+                font-size: 13px;
+            }
+
+            .nav-button {
+                padding: 6px 10px;
+                font-size: 13px;
+                min-width: 70px;
+            }
+
+            .weekday {
+                padding: 10px 2px;
+                font-size: 12px;
+                letter-spacing: 0.5px;
+            }
+
+            .calendar-day {
+                min-height: 70px;
+                padding: 6px;
+            }
+
+            .day-number {
+                font-size: 16px;
+            }
+
+            .unlock-event .day-number {
+                font-size: 18px;
+            }
+
+            .token-symbol {
+                padding: 3px 6px;
+                font-size: 11px;
+            }
+
+            .unlock-round {
+                font-size: 9px;
+            }
+
+            .unlock-period {
+                font-size: 8px;
+                margin-top: 1px;
+            }
+
+            .today::after {
+                font-size: 8px;
+                padding: 2px 4px;
+                top: -6px;
+                right: -6px;
+            }
+
+            .today.unlock-event::after {
+                font-size: 7px;
+                padding: 1px 3px;
+            }
+
+            .notes-section {
+                padding: 12px;
+            }
+
+            .note-item {
+                font-size: 12px;
+            }
+
+            .profit-link {
+                font-size: 10px;
+                padding: 1px 3px;
+                margin-left: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <button class="nav-button" onclick="changeMonth(-1)">← 上个月</button>
+            <div class="header-content">
+                <div class="header-title">Binance Booster 奖励解锁日历</div>
+                <div class="second-row">
+                    <div class="month-title" id="monthTitle"></div>
+                    <a href="https://x.com/NNNNNNOBITA" target="_blank" class="author-link" onclick="trackClick(event)">Author: NNNNNNOBITA</a>
+                </div>
+            </div>
+            <button class="nav-button" onclick="changeMonth(1)">下个月 →</button>
+        </div>
+
+        <div class="weekdays">
+            <div class="weekday">周一</div>
+            <div class="weekday">周二</div>
+            <div class="weekday">周三</div>
+            <div class="weekday">周四</div>
+            <div class="weekday">周五</div>
+            <div class="weekday">周六</div>
+            <div class="weekday">周日</div>
+        </div>
+
+        <div class="calendar-grid" id="calendarGrid">
+        </div>
+
+        <div class="notes-section" id="notesSection">
+        </div>
+    </div>
+
+    <script>
+        // Get current date in UTC+8 timezone (China Standard Time)
+        function getTodayUTC8() {
+            const now = new Date();
+            // Get UTC time and add 8 hours for China Standard Time
+            const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const utc8Time = new Date(utcTime + (8 * 60 * 60 * 1000));
+            return utc8Time;
+        }
+        
+        const today = getTodayUTC8();
+        let currentYear = today.getFullYear();
+        let currentMonth = today.getMonth(); // Current month (0-indexed)
+        
+        // Embedded unlock schedule data
+        const unlockData = {
+            "tokens": [
+                {
+                    "symbol": "BAS",
+                    "name": "BAS Token",
+                    "tgeDate": "2025-08-19",
+                    "unlockSchedule": [
+                        {
+                            "round": "第一次解锁 (TGE)",
+                            "daysFromTGE": 0,
+                            "period": "Week1-2",
+                            "profitLink": null
+                        },
+                        {
+                            "round": "第二次解锁",
+                            "daysFromTGE": 30,
+                            "period": "Week3-4",
+                            "profitLink": "https://x.com/NNNNNNOBITA/status/1962064462929953168"
+                        },
+                        {
+                            "round": "第三次解锁",
+                            "daysFromTGE": 60,
+                            "period": "Week5-6",
+                            "profitLink": null
+                        },
+                        {
+                            "round": "第四次解锁",
+                            "daysFromTGE": 90,
+                            "period": "Week7-9",
+                            "profitLink": null
+                        },
+                        {
+                            "round": "第五次解锁",
+                            "daysFromTGE": 120,
+                            "period": "Week10-12",
+                            "profitLink": null
+                        }
+                    ]
+                },
+                {
+                    "symbol": "XNY",
+                    "name": "XNY Token", 
+                    "tgeDate": "2025-07-23",
+                    "unlockSchedule": [
+                        {
+                            "round": "第一次解锁 (TGE)",
+                            "daysFromTGE": 0,
+                            "period": "Week1-2",
+                            "profitLink": null
+                        },
+                        {
+                            "round": "第二次解锁",
+                            "daysFromTGE": 30,
+                            "period": "Week3-4",
+                            "profitLink": null
+                        },
+                        {
+                            "round": "第三次解锁",
+                            "daysFromTGE": 60,
+                            "period": "Week5-8",
+                            "profitLink": "https://x.com/NNNNNNOBITA/status/1963789334290837605"
+                        },
+                        {
+                            "round": "第四次解锁",
+                            "daysFromTGE": 120,
+                            "period": "Week9-12",
+                            "profitLink": null
+                        }
+                    ]
+                },
+                {
+                    "symbol": "BTR",
+                    "name": "BTR Token",
+                    "tgeDate": "2025-08-27",
+                    "unlockSchedule": [
+                        {
+                            "round": "第一次解锁 (TGE)",
+                            "daysFromTGE": 0,
+                            "period": "Phase1+CreatorPad Special",
+                            "profitLink": null
+                        },
+                        {
+                            "round": "第二次解锁",
+                            "daysFromTGE": 60,
+                            "period": "Phase2",
+                            "profitLink": null
+                        },
+                        {
+                            "round": "第三次解锁",
+                            "daysFromTGE": 90,
+                            "period": "Phase3",
+                            "profitLink": null
+                        },
+                        {
+                            "round": "第四次解锁",
+                            "daysFromTGE": 120,
+                            "period": "Phase4",
+                            "profitLink": null
+                        }
+                    ]
+                },
+                {
+                    "symbol": "HEMI",
+                    "name": "HEMI Token",
+                    "tgeDate": "2025-08-29",
+                    "unlockSchedule": [
+                        {
+                            "round": "第一次解锁 (TGE)",
+                            "daysFromTGE": 0,
+                            "period": "Phase1",
+                            "profitLink": null
+                        }
+                    ]
+                },
+                {
+                    "symbol": "Open",
+                    "name": "Open Token",
+                    "tgeDate": "2025-09-08",
+                    "unlockSchedule": [
+                        {
+                            "round": "第一次解锁 (TGE)",
+                            "daysFromTGE": 0,
+                            "period": "Phase1",
+                            "profitLink": null
+                        }
+                    ]
+                },
+                {
+                    "symbol": "HOLO",
+                    "name": "HOLO Token",
+                    "tgeDate": "2025-09-11",
+                    "unlockSchedule": [
+                        {
+                            "round": "第一次解锁 (TGE)",
+                            "daysFromTGE": 0,
+                            "period": "Phase 1"
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // Calculate unlock events for a specific month
+        function calculateUnlockEvents(year, month) {
+            if (!unlockData) return {};
+
+            const events = {};
+            const targetMonthStart = new Date(year, month, 1);
+            const targetMonthEnd = new Date(year, month + 1, 0);
+
+            unlockData.tokens.forEach(token => {
+                const tgeDate = new Date(token.tgeDate);
+
+                token.unlockSchedule.forEach(unlock => {
+                    const unlockDate = new Date(tgeDate);
+                    unlockDate.setDate(unlockDate.getDate() + unlock.daysFromTGE);
+
+                    // Check if unlock date is in current month
+                    if (unlockDate >= targetMonthStart && unlockDate <= targetMonthEnd) {
+                        const day = unlockDate.getDate();
+                        if (!events[day]) {
+                            events[day] = [];
+                        }
+                        events[day].push({
+                            token: token.symbol,
+                            round: unlock.round,
+                            period: unlock.period,
+                            date: unlockDate.toISOString().split('T')[0]
+                        });
+                    }
+                });
+            });
+
+            return events;
+        }
+
+        function changeMonth(direction) {
+            let newMonth = currentMonth + direction;
+            let newYear = currentYear;
+
+            if (newMonth > 11) {
+                newMonth = 0;
+                newYear++;
+            } else if (newMonth < 0) {
+                newMonth = 11;
+                newYear--;
+            }
+
+            currentMonth = newMonth;
+            currentYear = newYear;
+            updateCalendar();
+        }
+
+        function generateCalendar() {
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            
+            // Get day of week for first day (Monday = 0)
+            let startDayOfWeek = (firstDay.getDay() + 6) % 7;
+            
+            const unlockEvents = calculateUnlockEvents(currentYear, currentMonth);
+            let calendarHTML = '';
+
+            // Add previous month's trailing days
+            const prevMonth = new Date(currentYear, currentMonth, 0);
+            const prevMonthDays = prevMonth.getDate();
+            
+            for (let i = startDayOfWeek - 1; i >= 0; i--) {
+                const dayNum = prevMonthDays - i;
+                calendarHTML += `
+                    <div class="calendar-day other-month">
+                        <div class="day-number">${dayNum}</div>
+                    </div>
+                `;
+            }
+
+            // Add current month's days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const unlockEventList = unlockEvents[day];
+                const hasEvents = unlockEventList && unlockEventList.length > 0;
+                
+                // Check if this day is today (in UTC+8)
+                const todayUTC8 = getTodayUTC8();
+                const isToday = (currentYear === todayUTC8.getFullYear() && 
+                               currentMonth === todayUTC8.getMonth() && 
+                               day === todayUTC8.getDate());
+                
+                let eventsHTML = '';
+                if (hasEvents) {
+                    eventsHTML = unlockEventList.map(event => `
+                        <div class="unlock-info">
+                            <div class="token-symbol">${event.token}</div>
+                            <div class="unlock-round">${event.round}</div>
+                            <div class="unlock-period">${event.period}</div>
+                        </div>
+                    `).join('');
+                }
+
+                // Build CSS classes
+                let cssClasses = 'calendar-day';
+                if (hasEvents) cssClasses += ' unlock-event';
+                if (isToday) cssClasses += ' today';
+
+                calendarHTML += `
+                    <div class="${cssClasses}">
+                        <div class="day-number">${day}</div>
+                        ${eventsHTML}
+                    </div>
+                `;
+            }
+
+            // Fill remaining cells
+            const totalCells = document.querySelectorAll('.calendar-day').length + daysInMonth + startDayOfWeek;
+            const cellsInLastRow = totalCells % 7;
+            if (cellsInLastRow !== 0) {
+                const remainingCells = 7 - cellsInLastRow;
+                for (let i = 0; i < remainingCells; i++) {
+                    calendarHTML += `<div class="calendar-day other-month" style="visibility: hidden;"></div>`;
+                }
+            }
+
+            return calendarHTML;
+        }
+
+        function getMonthTitle() {
+            const months = [
+                '1月', '2月', '3月', '4月', '5月', '6月',
+                '7月', '8月', '9月', '10月', '11月', '12月'
+            ];
+            return `${currentYear}年${months[currentMonth]}`;
+        }
+
+        function generateNotes() {
+            if (!unlockData) return '';
+
+            const targetMonthStart = new Date(currentYear, currentMonth, 1);
+            const targetMonthEnd = new Date(currentYear, currentMonth + 1, 0);
+            let notesHTML = '';
+
+            unlockData.tokens.forEach(token => {
+                const tgeDate = new Date(token.tgeDate);
+                let hasCurrentMonthUnlocks = false;
+                let tokenNotesHTML = '';
+
+                token.unlockSchedule.forEach(unlock => {
+                    const unlockDate = new Date(tgeDate);
+                    unlockDate.setDate(unlockDate.getDate() + unlock.daysFromTGE);
+
+                    // Check if unlock date is in current month
+                    if (unlockDate >= targetMonthStart && unlockDate <= targetMonthEnd) {
+                        if (!hasCurrentMonthUnlocks) {
+                            tokenNotesHTML = `<div>`;
+                            hasCurrentMonthUnlocks = true;
+                        }
+
+                        const unlockDateStr = unlockDate.toLocaleDateString('zh-CN');
+                        const profitLinkHTML = unlock.profitLink ? 
+                            `<a href="${unlock.profitLink}" target="_blank" class="profit-link" onclick="trackProfitClick(event)">收益测算</a>` : '';
+                        
+                        tokenNotesHTML += `
+                            <div class="note-item">
+                                <span class="token-name">${token.symbol}</span> ${unlock.round}: ${unlockDateStr} (${unlock.period})${profitLinkHTML}
+                            </div>
+                        `;
+                    }
+                });
+
+                if (hasCurrentMonthUnlocks) {
+                    tokenNotesHTML += `</div>`;
+                    notesHTML += tokenNotesHTML;
+                }
+            });
+
+            return notesHTML;
+        }
+
+        function updateCalendar() {
+            document.getElementById('monthTitle').textContent = getMonthTitle();
+            document.getElementById('calendarGrid').innerHTML = generateCalendar();
+            document.getElementById('notesSection').innerHTML = generateNotes();
+        }
+
+        // Initialize calendar
+        function init() {
+            updateCalendar();
+            
+            // Track page view after a short delay to ensure page is fully loaded
+            setTimeout(() => {
+                trackPageView();
+            }, 1000);
+        }
+
+        // Prevent duplicate clicks within short time frame
+        let lastClickTime = 0;
+        
+        // Track page views with session storage to prevent duplicates
+        function trackPageView() {
+            const sessionKey = 'calendar_page_viewed';
+            
+            // Check if already tracked this session
+            if (sessionStorage.getItem(sessionKey)) {
+                console.log('Page view already tracked in this session');
+                return;
+            }
+            
+            console.log('Tracking page view...');
+            
+            try {
+                // Track page views using calendar counter
+                fetch('https://api.counterapi.dev/v2/nobita/calendar/up', {
+                    method: 'GET',
+                    mode: 'no-cors',
+                    headers: {
+                        'Authorization': 'Bearer ut_ng8ohFJIAYIsFOu2vFgHIhPvn6k51wjzHIxriZZx'
+                    }
+                }).then(() => {
+                    console.log('Page view tracked successfully');
+                    // Mark as tracked in this session
+                    sessionStorage.setItem(sessionKey, 'true');
+                }).catch(error => {
+                    console.log('Page view tracking failed:', error);
+                });
+            } catch (error) {
+                console.log('Page view tracking error:', error);
+            }
+        }
+        
+        // Track author link clicks
+        function trackClick(event) {
+            const currentTime = Date.now();
+            const timeSinceLastClick = currentTime - lastClickTime;
+            
+            console.log('trackClick called - timestamp:', currentTime);
+            console.log('Time since last click:', timeSinceLastClick + 'ms');
+            
+            // Prevent duplicate calls within 2 seconds
+            if (timeSinceLastClick < 2000) {
+                console.log('Duplicate click prevented');
+                return true;
+            }
+            
+            lastClickTime = currentTime;
+            
+            try {
+                console.log('Sending counter request...');
+                // Use fetch with no-cors mode (proven to work)
+                fetch('https://api.counterapi.dev/v2/nobita/x-nobita/down', {
+                    method: 'GET',
+                    mode: 'no-cors',
+                    headers: {
+                        'Authorization': 'Bearer ut_ng8ohFJIAYIsFOu2vFgHIhPvn6k51wjzHIxriZZx'
+                    }
+                }).then(() => {
+                    console.log('Counter request completed successfully');
+                }).catch(error => {
+                    console.log('Counter API call failed:', error);
+                });
+            } catch (error) {
+                console.log('Counter API error:', error);
+            }
+            return true;
+        }
+        
+        // Track profit calculation link clicks
+        function trackProfitClick(event) {
+            const currentTime = Date.now();
+            const timeSinceLastClick = currentTime - lastClickTime;
+            
+            console.log('trackProfitClick called - timestamp:', currentTime);
+            console.log('Time since last click:', timeSinceLastClick + 'ms');
+            
+            // Prevent duplicate calls within 2 seconds
+            if (timeSinceLastClick < 2000) {
+                console.log('Duplicate profit click prevented');
+                return true;
+            }
+            
+            lastClickTime = currentTime;
+            
+            try {
+                console.log('Sending profit counter request...');
+                // Use fetch with no-cors mode for profit calculation clicks
+                fetch('https://api.counterapi.dev/v2/nobita/x-nobita/down', {
+                    method: 'GET',
+                    mode: 'no-cors',
+                    headers: {
+                        'Authorization': 'Bearer ut_ng8ohFJIAYIsFOu2vFgHIhPvn6k51wjzHIxriZZx'
+                    }
+                }).then(() => {
+                    console.log('Profit counter request completed successfully');
+                }).catch(error => {
+                    console.log('Profit counter API call failed:', error);
+                });
+            } catch (error) {
+                console.log('Profit counter API error:', error);
+            }
+            return true;
+        }
+
+        // Start the application
+        init();
+    </script>
+</body>
+</html>
