@@ -152,6 +152,9 @@
             border-radius: 12px;
         }
 
+        .calendar-day.clickable { cursor: pointer; }
+        .calendar-day.clickable:hover { outline: 2px solid rgba(240, 185, 11, 0.3); }
+
         .day-number {
             font-size: 20px;
             font-weight: bold;
@@ -582,7 +585,7 @@
                             "round": "第二次解锁",
                             "daysFromTGE": 30,
                             "period": "Week3-4",
-                            "profitLink": "https://x.com/NNNNNNOBITA/status/1962064462929953168"
+                            "profitLink": "binance_bas_second_unlock.html"
                         },
                         {
                             "round": "第三次解锁",
@@ -675,7 +678,7 @@
                             "round": "第一次解锁 (TGE)",
                             "daysFromTGE": 0,
                             "period": "Phase1",
-                            "profitLink": null
+                            "profitLink": "binance_hemi_first_unlock.html"
                         }
                     ]
                 },
@@ -700,7 +703,8 @@
                         {
                             "round": "第一次解锁 (TGE)",
                             "daysFromTGE": 0,
-                            "period": "Phase 1"
+                            "period": "Phase 1",
+                            "profitLink": "binance_holo_first_unlock.html"
                         }
                     ]
                 }
@@ -732,7 +736,8 @@
                             token: token.symbol,
                             round: unlock.round,
                             period: unlock.period,
-                            date: unlockDate.toISOString().split('T')[0]
+                            date: unlockDate.toISOString().split('T')[0],
+                            profitLink: unlock.profitLink || null
                         });
                     }
                 });
@@ -809,8 +814,25 @@
                 if (hasEvents) cssClasses += ' unlock-event';
                 if (isToday) cssClasses += ' today';
 
+                // Determine a profit link for this day (first available)
+                let dayProfitLink = null;
+                if (hasEvents) {
+                    const withLink = unlockEventList.find(e => e.profitLink);
+                    if (withLink) dayProfitLink = withLink.profitLink;
+                }
+
+                // Accessibility label
+                const ariaLabel = hasEvents
+                    ? (dayProfitLink
+                        ? `aria-label="${unlockEventList[0].token} ${unlockEventList[0].date} 收益测算，点击打开"`
+                        : `aria-label="${unlockEventList[0].token} ${unlockEventList[0].date} 解锁信息"`)
+                    : '';
+
+                // Key handlers for accessibility
+                const keyHandler = dayProfitLink ? `onkeydown=\"if(event.key==='Enter'||event.key===' '){openProfitLink('${dayProfitLink}');}\"` : '';
+
                 calendarHTML += `
-                    <div class="${cssClasses}">
+                    <div class="${cssClasses} ${dayProfitLink ? 'clickable' : ''}" ${ariaLabel} ${dayProfitLink ? 'tabindex="0"' : ''} ${keyHandler} ${dayProfitLink ? `onclick="openProfitLink('${dayProfitLink}')"` : ''}>
                         <div class="day-number">${day}</div>
                         ${eventsHTML}
                     </div>
@@ -863,7 +885,7 @@
 
                         const unlockDateStr = unlockDate.toLocaleDateString('zh-CN');
                         const profitLinkHTML = unlock.profitLink ? 
-                            `<a href="${unlock.profitLink}" target="_blank" class="profit-link" onclick="trackProfitClick(event)">收益测算</a>` : '';
+                            `<a href="${unlock.profitLink}" class="profit-link" onclick="trackProfitClick(event)">收益测算</a>` : '';
                         
                         tokenNotesHTML += `
                             <div class="note-item">
@@ -886,6 +908,13 @@
             document.getElementById('monthTitle').textContent = getMonthTitle();
             document.getElementById('calendarGrid').innerHTML = generateCalendar();
             document.getElementById('notesSection').innerHTML = generateNotes();
+        }
+
+        function openProfitLink(url) {
+            if (!url) return;
+            try { trackProfitClick({}); } catch(e) {}
+            // Navigate in the same tab; small delay to allow tracking ping
+            setTimeout(() => { window.location.href = url; }, 50);
         }
 
         // Initialize calendar

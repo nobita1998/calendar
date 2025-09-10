@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>任务完成进度 - Binance Style</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #0c0c0f 0%, #1a1a23 100%);
+      color: #ffffff;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(23, 23, 31, 0.8);
+      border-radius: 16px;
+      border: 1px solid #2b2b40;
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(240, 185, 11, 0.1);
+    }
+
+    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+    .title {
+      font-size: 1.4em; font-weight: bold;
+      background: linear-gradient(45deg, #f0b90b, #fcd535);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    /* 返回按钮样式（与日历风格一致） */
+    .back-link {
+      display: inline-block;
+      background: linear-gradient(135deg, #0ecb81 0%, #1dd1a1 100%);
+      color: #000; font-weight: 700;
+      padding: 8px 12px; border-radius: 8px; text-decoration: none;
+      box-shadow: 0 2px 8px rgba(14,203,129,.3);
+    }
+    .back-link:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(14,203,129,.5); }
+
+    .lottery-section {
+      background: linear-gradient(135deg, rgba(38, 166, 154, 0.1) 0%, rgba(23, 23, 31, 0.9) 100%);
+      border: 1px solid #2b2b40;
+      border-radius: 12px;
+      padding: 25px;
+    }
+    .lottery-title { font-size: 1.6em; color: #26a69a; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .lottery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .lottery-item { background: rgba(38, 166, 154, 0.1); border: 1px solid rgba(38, 166, 154, 0.3); border-radius: 8px; padding: 20px; text-align: center; }
+    .lottery-emoji { font-size: 2em; margin-bottom: 10px; }
+    .lottery-rate { color: #26a69a; font-weight: 600; margin-bottom: 6px; }
+    .lottery-reward { color: #f0b90b; font-size: 1.1em; font-weight: 600; }
+
+    .watermark { text-align: right; color: #848e9c; font-size: 1em; opacity: 0.8; margin-top: 20px; padding-right: 10px; }
+
+    /* 移动端适配：与 BAS/HEMI 保持一致比例 */
+    .bonus-section {
+      background: linear-gradient(135deg, rgba(240, 185, 11, 0.2) 0%, rgba(23, 23, 31, 0.9) 100%);
+      border: 1px solid #2b2b40;
+      border-radius: 12px;
+      padding: 20px 25px;
+      margin-top: 20px;
+    }
+    .bonus-title { font-size: 1.4em; color: #f0b90b; margin-bottom: 14px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .bonus-list { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .bonus-item { background: rgba(240,185,11,0.08); border: 1px solid rgba(240,185,11,0.35); border-radius: 8px; padding: 14px; text-align: center; }
+    .bonus-range { font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .bonus-amount { color: #f0b90b; font-weight: 700; }
+    @media (max-width: 768px) {
+      body { padding: 10px; }
+      .container { max-width: 100%; margin: 0; border-radius: 16px; padding: 20px; }
+      .header { margin-bottom: 20px; }
+      .title { font-size: 1.3em; }
+      .lottery-section { padding: 16px; border-radius: 10px; }
+      .lottery-grid { grid-template-columns: 1fr; gap: 12px; }
+      .lottery-item { padding: 16px; }
+      .bonus-section { padding: 16px; }
+      .bonus-list { grid-template-columns: 1fr; }
+      .back-link { padding: 6px 10px; font-size: 14px; }
+    }
+    @media (max-width: 480px) {
+      .header { padding-top: 8px; }
+      .title { font-size: 1.15em; }
+      .back-link { font-size: 13px; padding: 6px 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="index.html" class="back-link" aria-label="返回日历" onclick="if (document.referrer && new URL(document.referrer).origin === location.origin) { history.back(); return false; }">← 返回日历</a>
+      <h1 class="title">HOLO 第一期</h1>
+    </div>
+
+    <div class="lottery-section">
+      <div class="lottery-title">🎰 抽奖任务</div>
+      <div class="lottery-grid">
+        <div class="lottery-item">
+          <div class="lottery-emoji">🎟️</div>
+          <div style="font-weight: 600; margin-bottom: 10px;">任务一：抽奖</div>
+          <div class="lottery-rate">名额：30720人</div>
+          <div class="lottery-reward">每人：20 枚</div>
+        </div>
+        <div class="lottery-item">
+          <div class="lottery-emoji">🎟️</div>
+          <div style="font-weight: 600; margin-bottom: 10px;">任务二：抽奖</div>
+          <div class="lottery-rate">名额：21504人</div>
+          <div class="lottery-reward">每人：200 枚</div>
+        </div>
+        <div class="lottery-item">
+          <div class="lottery-emoji">🎟️</div>
+          <div style="font-weight: 600; margin-bottom: 10px;">任务三：抽奖</div>
+          <div class="lottery-rate">名额：18432人</div>
+          <div class="lottery-reward">每人：50 枚</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bonus-section" aria-label="AVA 排名前100额外奖励">
+      <div class="bonus-title">🏆 AVA 排名前100额外奖励</div>
+      <div class="bonus-list">
+        <div class="bonus-item">
+          <div class="bonus-range">第1–10名</div>
+          <div class="bonus-amount">10752 枚/人</div>
+        </div>
+        <div class="bonus-item">
+          <div class="bonus-range">第11–50名</div>
+          <div class="bonus-amount">3072 枚/人</div>
+        </div>
+        <div class="bonus-item">
+          <div class="bonus-range">第51–100名</div>
+          <div class="bonus-amount">1536 枚/人</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="watermark">X: @NNNNNNOBITA</div>
+  </div>
+</body>
+</html>
