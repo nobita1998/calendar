@@ -150,6 +150,8 @@
             position: relative;
             background: #2b3139;
             border-radius: 12px;
+            /* establish base stacking context for day cells */
+            z-index: 0;
         }
 
         .calendar-day.clickable { cursor: pointer; }
@@ -176,7 +178,9 @@
             box-shadow: 0 0 30px rgba(14, 203, 129, 0.6);
             transform: scale(1.08);
             position: relative;
+            /* keep contents tidy by default; may be overridden */
             overflow: hidden;
+            z-index: 1;
         }
 
         .unlock-event::before {
@@ -233,6 +237,8 @@
                         0 0 40px rgba(240, 185, 11, 0.4);
             position: relative;
             animation: todayPulse 2s ease-in-out infinite alternate;
+            /* ensure today sits above regular/unlock cells */
+            z-index: 2;
         }
 
         @keyframes todayPulse {
@@ -247,7 +253,7 @@
         }
 
         .today::after {
-            content: 'TODAY';
+            content: 'Today';
             position: absolute;
             top: -12px;
             right: -12px;
@@ -268,6 +274,8 @@
             box-shadow: 0 0 35px rgba(240, 185, 11, 0.9), 
                         0 0 50px rgba(14, 203, 129, 0.8);
             animation: todayUnlockPulse 1.5s ease-in-out infinite alternate;
+            /* allow TODAY badge to protrude outside without being clipped */
+            overflow: visible;
         }
 
         @keyframes todayUnlockPulse {
@@ -282,7 +290,7 @@
         }
 
         .today.unlock-event::after {
-            content: 'UNLOCK TODAY';
+            content: 'Today';
             font-size: 11px;
             padding: 3px 6px;
             letter-spacing: 0.3px;
@@ -908,13 +916,52 @@
             document.getElementById('monthTitle').textContent = getMonthTitle();
             document.getElementById('calendarGrid').innerHTML = generateCalendar();
             document.getElementById('notesSection').innerHTML = generateNotes();
+            rehydrateProfitAnchors();
         }
 
-        function openProfitLink(url) {
-            if (!url) return;
-            try { trackProfitClick({}); } catch(e) {}
-            // Navigate in the same tab; small delay to allow tracking ping
-            setTimeout(() => { window.location.href = url; }, 50);
+        // Ensure notes anchors call openProfitLink inline for consistency
+        function rehydrateProfitAnchors() {
+            try {
+                const links = document.querySelectorAll('#notesSection a.profit-link');
+                links.forEach(a => {
+                    const href = a.getAttribute('href');
+                    if (!href) return;
+                    a.setAttribute('onclick', `return openProfitLink('${href}', event)`);
+                    if (!a.textContent || a.textContent.trim().length < 2) {
+                        a.textContent = '收益预览';
+                    }
+                });
+            } catch (_) {}
+        }
+
+        // Unified "down" endpoint and reliable ping
+        const DOWN_ENDPOINT = 'https://api.counterapi.dev/v2/nobita/x-nobita/down';
+
+        function pingDown() {
+            try {
+                if (navigator.sendBeacon) {
+                    const blob = new Blob([], { type: 'text/plain' });
+                    navigator.sendBeacon(DOWN_ENDPOINT, blob);
+                    return true;
+                }
+            } catch (e) { /* no-op */ }
+            try {
+                fetch(DOWN_ENDPOINT, { method: 'GET', mode: 'no-cors', keepalive: true }).catch(() => {});
+            } catch (e) { /* no-op */ }
+            return true;
+        }
+
+        function openProfitLink(url, event) {
+            if (!url) return false;
+            // Allow new-tab behavior while still pinging
+            if (event && (event.metaKey || event.ctrlKey || event.button === 1)) {
+                try { pingDown(); } catch (e) {}
+                return true; // allow default new-tab navigation
+            }
+            try { trackProfitClick({}); } catch(e) { try { pingDown(); } catch(e2) {} }
+            // Navigate in the same tab; micro delay allows request to dispatch
+            setTimeout(() => { window.location.href = url; }, 0);
+            return false; // prevent default when used on <a>
         }
 
         // Initialize calendar
@@ -1016,23 +1063,24 @@
             
             try {
                 console.log('Sending profit counter request...');
-                // Use fetch with no-cors mode for profit calculation clicks
-                fetch('https://api.counterapi.dev/v2/nobita/x-nobita/down', {
-                    method: 'GET',
-                    mode: 'no-cors',
-                    headers: {
-                        'Authorization': 'Bearer ut_ng8ohFJIAYIsFOu2vFgHIhPvn6k51wjzHIxriZZx'
-                    }
-                }).then(() => {
-                    console.log('Profit counter request completed successfully');
-                }).catch(error => {
-                    console.log('Profit counter API call failed:', error);
-                });
+                // Prefer beacon to avoid cancellation on navigation
+                pingDown();
             } catch (error) {
                 console.log('Profit counter API error:', error);
             }
             return true;
         }
+
+        // Delegate clicks on profit links to ensure reliable tracking
+        document.addEventListener('click', function(e) {
+            const link = e.target && e.target.closest && e.target.closest('a.profit-link');
+            if (!link) return;
+            const url = link.getAttribute('href');
+            const proceed = openProfitLink(url, e);
+            if (!proceed) {
+                try { e.preventDefault(); } catch(_) {}
+            }
+        });
 
         // Start the application
         init();
