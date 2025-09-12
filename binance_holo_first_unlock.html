@@ -200,6 +200,10 @@
           out = out.replace(/任务\s*([一二三四五六七八九十]+)/g, (m,cn)=>`Task ${toNumberToken(cn)}`);
           out = out.replace(/任务/g, 'Task');
           out = out.replace(/周/g, 'Week');
+          function fmtEN(num){ try { return Number(num).toLocaleString('en-US'); } catch(_){ return num; } }
+          out = out.replace(/中奖率\s*[:：]\s*/g, 'Win rate: ');
+          out = out.replace(/约\s*(\d+)\s*%/g, (m,n)=>`~${n}%`);
+          out = out.replace(/(\d{1,9})\s*人中奖/g, (m,n)=>`${fmtEN(n)} winners`);
         } catch(_){}
         return out;
       }
