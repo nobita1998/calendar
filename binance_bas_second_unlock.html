@@ -458,6 +458,11 @@
             out = out.replace(/昨天/g, 'Yesterday');
             out = out.replace(/明天/g, 'Tomorrow');
           } catch(_){}
+          // Spacing fix-ups (e.g., "Per personReward" -> "Per person Reward")
+          try {
+            out = out.replace(/(Per person)(?=[A-Za-z])/g, '$1 ');
+            out = out.replace(/(Per person:)\s*(?=[A-Za-z])/g, '$1 ');
+          } catch(_){}
           return out;
         }
 
