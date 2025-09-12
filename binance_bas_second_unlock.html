@@ -418,6 +418,14 @@
           let out = String(str||'');
           try {
             out = out.replace(/抽奖任务/g, 'Lottery Tasks');
+            out = out.replace(/抽奖/g, 'Lottery');
+            out = out.replace(/概率|几率/g, 'Probability');
+            out = out.replace(/奖励/g, 'Reward');
+            out = out.replace(/汇总|合计|总计|共计|总共/g, 'Total');
+            out = out.replace(/剩余|还需/g, 'Remaining');
+            out = out.replace(/至少|最少/g, 'at least');
+            out = out.replace(/最低/g, 'minimum');
+            out = out.replace(/最多|最高/g, 'up to');
             out = out.replace(/第\s*(\d+)\s*周/g, (m,n)=>`Week ${n}`);
             out = out.replace(/第\s*([一二三四五六七八九十]+)\s*周/g, (m,cn)=>`Week ${toNumberToken(cn)}`);
             out = out.replace(/任务\s*(\d+)/g, (m,n)=>`Task ${n}`);
@@ -425,6 +433,13 @@
             // Common standalone words
             out = out.replace(/任务/g, 'Task');
             out = out.replace(/周/g, 'Week');
+            out = out.replace(/第\s*(\d+)\s*天/g, (m,n)=>`Day ${n}`);
+            out = out.replace(/第\s*([一二三四五六七八九十]+)\s*天/g, (m,cn)=>`Day ${toNumberToken(cn)}`);
+            // Phases and batches
+            out = out.replace(/第\s*(\d+)\s*(阶段|期)/g, (m,n)=>`Phase ${n}`);
+            out = out.replace(/第\s*([一二三四五六七八九十]+)\s*(阶段|期)/g, (m,cn)=>`Phase ${toNumberToken(cn)}`);
+            out = out.replace(/第\s*(\d+)\s*批/g, (m,n)=>`Batch ${n}`);
+            out = out.replace(/第\s*([一二三四五六七八九十]+)\s*批/g, (m,cn)=>`Batch ${toNumberToken(cn)}`);
             // Win rate: 中奖率: 约50% | 20000人中奖
             function fmtEN(num){ try { return Number(num).toLocaleString('en-US'); } catch(_){ return num; } }
             out = out.replace(/中奖率\s*[:：]\s*/g, 'Win rate: ');
@@ -434,26 +449,27 @@
             out = out.replace(/每人\s*(\d{1,9})\s*币/g, (m,n)=>`Per person ${fmtEN(n)} coins`);
             out = out.replace(/每人\s*[:：]\s*/g, 'Per person: ');
             out = out.replace(/(\d{1,9})\s*币/g, (m,n)=>`${fmtEN(n)} coins`);
+            // Today/Yesterday/Tomorrow
+            out = out.replace(/今天|今日/g, 'Today');
+            out = out.replace(/昨天/g, 'Yesterday');
+            out = out.replace(/明天/g, 'Tomorrow');
           } catch(_){}
           return out;
         }
 
         function applyDetailTranslations(){
           if (currentLang !== 'en') return;
-          // Titles inside cards
-          document.querySelectorAll('.task-title').forEach(el=>{ el.textContent = translateDetailText(el.textContent); });
-          // Any text in lottery section items
-          const lot = document.querySelector('.lottery-section');
-          if (lot) {
-            const walker = document.createTreeWalker(lot, NodeFilter.SHOW_TEXT, null);
-            const updates = [];
-            while (walker.nextNode()) {
-              const node = walker.currentNode;
-              const newVal = translateDetailText(node.nodeValue);
-              if (newVal !== node.nodeValue) updates.push([node,newVal]);
-            }
-            updates.forEach(([n,v])=>{ n.nodeValue = v; });
+          // Translate across the whole container
+          const root = document.querySelector('.container') || document.body;
+          if (!root) return;
+          const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+          const updates = [];
+          while (walker.nextNode()) {
+            const node = walker.currentNode;
+            const newVal = translateDetailText(node.nodeValue);
+            if (newVal !== node.nodeValue) updates.push([node,newVal]);
           }
+          updates.forEach(([n,v])=>{ n.nodeValue = v; });
         }
 
         applyI18n();
