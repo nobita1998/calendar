@@ -363,5 +363,39 @@
             X: @NNNNNNOBITA
         </div>
     </div>
+    <script>
+      (function() {
+        const LANG_STORAGE_KEY = 'calendar_lang';
+        const currentLang = (function(){ try { return localStorage.getItem(LANG_STORAGE_KEY) || 'zh'; } catch(_){ return 'zh'; } })();
+        const dict = {
+          zh: { back: '返回日历', summary: '汇总', lottery: '抽奖', roundFirst: '第一次解锁', roundSecond: '第二次解锁', headPrefix: 'Binance Booster - ' },
+          en: { back: 'Back to Calendar', summary: 'Summary', lottery: 'Lottery', roundFirst: 'First Unlock', roundSecond: 'Second Unlock', headPrefix: 'Binance Booster - ' }
+        };
+        function getMetaFromPath(){
+          const p = (location.pathname || '').toLowerCase();
+          let token = 'BAS';
+          if (p.includes('hemi')) token = 'HEMI';
+          if (p.includes('holo')) token = 'HOLO';
+          const isSecond = /second/.test(p);
+          return { token, roundKey: isSecond ? 'roundSecond' : 'roundFirst' };
+        }
+        function applyI18n(){
+          try { document.documentElement.setAttribute('lang', currentLang === 'zh' ? 'zh-CN' : 'en-US'); } catch(_){ }
+          const meta = getMetaFromPath();
+          const t = dict[currentLang];
+          const titleStr = `${t.headPrefix}${meta.token} ${t[meta.roundKey]}`;
+          const h1 = document.querySelector('h1.title');
+          if (h1) h1.textContent = titleStr;
+          try { document.title = titleStr; } catch(_){ }
+          const back = document.querySelector('.back-link');
+          if (back) { back.textContent = t.back; back.setAttribute('aria-label', t.back); }
+          const sumTitle = document.querySelector('.summary-title');
+          if (sumTitle) sumTitle.textContent = t.summary;
+          const lotTitle = document.querySelector('.lottery-title');
+          if (lotTitle) lotTitle.textContent = t.lottery;
+        }
+        applyI18n();
+      })();
+    </script>
 </body>
 </html>
