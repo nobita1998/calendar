@@ -50,6 +50,35 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative; /* for top-right language toggle */
+        }
+
+        .lang-toggle {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: inline-flex;
+            gap: 6px;
+            z-index: 5;
+        }
+
+        .lang-button {
+            background: rgba(0,0,0,0.1);
+            color: #000;
+            border: 1px solid rgba(0,0,0,0.2);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .lang-button:hover { background: rgba(0,0,0,0.18); }
+        .lang-button.active {
+            background: #000;
+            color: #f8d12f;
+            border-color: #000;
         }
 
         .header-content {
@@ -253,7 +282,7 @@
         }
 
         .today::after {
-            content: 'Today';
+            content: attr(data-today-label);
             position: absolute;
             top: -12px;
             right: -12px;
@@ -290,7 +319,7 @@
         }
 
         .today.unlock-event::after {
-            content: 'Today';
+            content: attr(data-today-label);
             font-size: 11px;
             padding: 3px 6px;
             letter-spacing: 0.3px;
@@ -358,6 +387,10 @@
                 font-size: 14px;
                 min-width: 80px;
             }
+
+            /* Language toggle: mobile-friendly tap targets */
+            .lang-toggle { top: 8px; right: 8px; gap: 8px; }
+            .lang-button { min-width: 44px; min-height: 36px; padding: 6px 10px; font-size: 12px; }
 
             .header-title {
                 font-size: 18px;
@@ -469,6 +502,10 @@
                 min-width: 70px;
             }
 
+            /* Language toggle: compact but accessible */
+            .lang-toggle { top: 8px; right: 8px; gap: 6px; }
+            .lang-button { min-width: 44px; min-height: 36px; padding: 6px 8px; font-size: 12px; }
+
             .weekday {
                 padding: 10px 2px;
                 font-size: 12px;
@@ -544,6 +581,11 @@
             <button class="nav-button" onclick="changeMonth(1)">下个月 →</button>
         </div>
 
+        <div class="lang-toggle" role="group" aria-label="Language">
+            <button class="lang-button active" id="langZh" onclick="setLanguage('zh')" aria-pressed="true">中文</button>
+            <button class="lang-button" id="langEn" onclick="setLanguage('en')" aria-pressed="false">EN</button>
+        </div>
+
         <div class="weekdays">
             <div class="weekday">周一</div>
             <div class="weekday">周二</div>
@@ -562,6 +604,171 @@
     </div>
 
     <script>
+        // --- i18n setup ---
+        const LANG_STORAGE_KEY = 'calendar_lang';
+        const i18n = {
+            zh: {
+                title: 'Binance Booster 解锁日历',
+                prev: '上一月',
+                next: '下一月',
+                weekdays: ['周一','周二','周三','周四','周五','周六','周日'],
+                today: '今天',
+                author: '作者: NNNNNNOBITA',
+                profitLink: '收益计算'
+            },
+            en: {
+                title: 'Binance Booster Unlock Calendar',
+                prev: 'Prev',
+                next: 'Next',
+                weekdays: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+                today: 'Today',
+                author: 'Author: NNNNNNOBITA',
+                profitLink: 'Profit Calc'
+            }
+        };
+
+        let currentLang = (function() {
+            try { return localStorage.getItem(LANG_STORAGE_KEY) || 'zh'; } catch (_) { return 'zh'; }
+        })();
+
+        function t(key) { return (i18n[currentLang] && i18n[currentLang][key]) || key; }
+        function getLocale() { return currentLang === 'zh' ? 'zh-CN' : 'en-US'; }
+
+        function renderWeekdays() {
+            const labels = i18n[currentLang].weekdays;
+            const container = document.querySelector('.weekdays');
+            if (!container) return;
+            const items = container.children;
+            for (let i = 0; i < Math.min(items.length, 7); i++) items[i].textContent = labels[i];
+        }
+
+        function applyStaticTexts() {
+            try { document.documentElement.setAttribute('lang', getLocale()); } catch (_) {}
+            const titleEl = document.getElementById('headerTitle') || document.querySelector('.header-title');
+            if (titleEl) titleEl.textContent = t('title');
+            const authorEl = document.getElementById('authorLink') || document.querySelector('.author-link');
+            if (authorEl) authorEl.textContent = t('author');
+            const header = document.querySelector('.calendar-header');
+            if (header) {
+                const btns = header.querySelectorAll('.nav-button');
+                if (btns[0]) btns[0].textContent = t('prev');
+                if (btns[1]) btns[1].textContent = t('next');
+            }
+            // Toggle buttons
+            const zhBtn = document.getElementById('langZh');
+            const enBtn = document.getElementById('langEn');
+            if (zhBtn && enBtn) {
+                const zhActive = currentLang === 'zh';
+                zhBtn.classList.toggle('active', zhActive);
+                enBtn.classList.toggle('active', !zhActive);
+                zhBtn.setAttribute('aria-pressed', String(zhActive));
+                enBtn.setAttribute('aria-pressed', String(!zhActive));
+            }
+            renderWeekdays();
+        }
+
+        function setLanguage(lang) {
+            if (!i18n[lang]) return;
+            currentLang = lang;
+            try { localStorage.setItem(LANG_STORAGE_KEY, lang); } catch (_) {}
+            applyStaticTexts();
+            updateCalendar();
+        }
+
+        // Translate Chinese round labels like "第XX次解锁" to English when needed
+        function translateRoundLabel(input) {
+            const src = String(input || '');
+            if (currentLang !== 'en') return src; // keep Chinese in ZH mode
+            let out = src;
+            try {
+                // Normalize TGE parentheses
+                out = out.replace(/[（(]\s*TGE\s*[)）]/gi, 'TGE');
+                // Common phrases
+                out = out.replace(/首次解锁/g, 'Round 1 Unlock');
+                // Patterns: 第N次解锁 / 第N轮解锁
+                out = out.replace(/第\s*(\d+)\s*次解锁/g, (m, n) => `Round ${n} Unlock`);
+                out = out.replace(/第\s*(\d+)\s*轮解锁/g, (m, n) => `Round ${n} Unlock`);
+                // Generic 解锁 -> Unlock (only if it appears alone or with punctuation)
+                out = out.replace(/解锁/g, 'Unlock');
+            } catch (_) { /* noop */ }
+            return out;
+        }
+
+        // --- Enhanced mapping for 第一次/第N次 (and 轮) ---
+        // Override translateRoundLabel with richer rules including Chinese numerals.
+        // Keeps Chinese in ZH mode; English mapping only when currentLang === 'en'.
+        function cnNumToInt(s) {
+            if (!s) return NaN;
+            const map = { '一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9 };
+            // Handle 1-99 using 十
+            let tens = 0, units = 0;
+            const hasShi = s.includes('十');
+            if (!hasShi) {
+                return map[s] || NaN;
+            }
+            const parts = s.split('十');
+            const left = parts[0];
+            const right = parts[1];
+            if (left === '') tens = 1; else tens = map[left] || 0;
+            if (right === '') units = 0; else units = map[right] || 0;
+            return tens * 10 + units;
+        }
+
+        // Reassign with improved translator
+        translateRoundLabel = function(input) {
+            const src = String(input || '');
+            if (currentLang !== 'en') return src;
+            let out = src;
+            try {
+                // Normalize (TGE)/(（TGE）) → TGE
+                out = out.replace(/[()（）]\s*TGE\s*[()（）]/gi, 'TGE');
+
+                // 1) Exact phrases first
+                out = out.replace(/第一次解锁/g, 'Round 1 Unlock');
+                out = out.replace(/第一次(?![\u4e00-\u9fa5])/g, 'Round 1');
+                out = out.replace(/首次解锁/g, 'Round 1 Unlock');
+                out = out.replace(/首次(?![\u4e00-\u9fa5])/g, 'Round 1');
+
+                // 2) 第N次/第N轮 with digits
+                out = out.replace(/第\s*(\d+)\s*次解锁/g, (m, n) => `Round ${n} Unlock`);
+                out = out.replace(/第\s*(\d+)\s*次(?!\s*解锁)/g, (m, n) => `Round ${n}`);
+                out = out.replace(/第\s*(\d+)\s*轮解锁/g, (m, n) => `Round ${n} Unlock`);
+                out = out.replace(/第\s*(\d+)\s*轮(?!\s*解锁)/g, (m, n) => `Round ${n}`);
+
+                // 3) 第[中文数字]次/轮 with Chinese numerals 1-99
+                out = out.replace(/第\s*([一二三四五六七八九十]+)\s*次解锁/g, (m, cn) => {
+                    const n = cnNumToInt(cn);
+                    return isNaN(n) ? m : `Round ${n} Unlock`;
+                });
+                out = out.replace(/第\s*([一二三四五六七八九十]+)\s*次(?!\s*解锁)/g, (m, cn) => {
+                    const n = cnNumToInt(cn);
+                    return isNaN(n) ? m : `Round ${n}`;
+                });
+                out = out.replace(/第\s*([一二三四五六七八九十]+)\s*轮解锁/g, (m, cn) => {
+                    const n = cnNumToInt(cn);
+                    return isNaN(n) ? m : `Round ${n} Unlock`;
+                });
+                out = out.replace(/第\s*([一二三四五六七八九十]+)\s*轮(?!\s*解锁)/g, (m, cn) => {
+                    const n = cnNumToInt(cn);
+                    return isNaN(n) ? m : `Round ${n}`;
+                });
+
+                // 4) Generic 解锁 → Unlock (after specific patterns)
+                out = out.replace(/解锁/g, 'Unlock');
+            } catch (_) { /* noop */ }
+            return out;
+        }
+
+        function getMonthTitleLocalized() {
+            if (currentLang === 'zh') {
+                return `${currentYear}年${currentMonth + 1}月`;
+            }
+            const monthsEn = [
+                'January','February','March','April','May','June',
+                'July','August','September','October','November','December'
+            ];
+            return `${monthsEn[currentMonth]} ${currentYear}`;
+        }
         // Get current date in UTC+8 timezone (China Standard Time)
         function getTodayUTC8() {
             const now = new Date();
@@ -811,7 +1018,7 @@
                     eventsHTML = unlockEventList.map(event => `
                         <div class="unlock-info">
                             <div class="token-symbol">${event.token}</div>
-                            <div class="unlock-round">${event.round}</div>
+                            <div class="unlock-round">${translateRoundLabel(event.round)}</div>
                             <div class="unlock-period">${event.period}</div>
                         </div>
                     `).join('');
@@ -891,7 +1098,7 @@
                             hasCurrentMonthUnlocks = true;
                         }
 
-                        const unlockDateStr = unlockDate.toLocaleDateString('zh-CN');
+                        const unlockDateStr = unlockDate.toLocaleDateString(getLocale());
                         const profitLinkHTML = unlock.profitLink ? 
                             `<a href="${unlock.profitLink}" class="profit-link" onclick="trackProfitClick(event)">收益测算</a>` : '';
                         
@@ -913,10 +1120,34 @@
         }
 
         function updateCalendar() {
-            document.getElementById('monthTitle').textContent = getMonthTitle();
+            document.getElementById('monthTitle').textContent = getMonthTitleLocalized();
             document.getElementById('calendarGrid').innerHTML = generateCalendar();
             document.getElementById('notesSection').innerHTML = generateNotes();
             rehydrateProfitAnchors();
+            try { document.querySelectorAll('.calendar-day.today').forEach(el => el.setAttribute('data-today-label', t('today'))); } catch (_) {}
+            try { document.querySelectorAll('#notesSection a.profit-link').forEach(a => { a.textContent = t('profitLink'); }); } catch (_) {}
+            localizeRoundsInDOM();
+        }
+
+        function localizeRoundsInDOM() {
+            try {
+                // Update unlock-round labels in the grid
+                document.querySelectorAll('.unlock-round').forEach(el => {
+                    el.textContent = translateRoundLabel(el.textContent);
+                });
+                // Update any Chinese round phrases inside notes text nodes
+                const notes = document.getElementById('notesSection');
+                if (!notes) return;
+                const walker = document.createTreeWalker(notes, NodeFilter.SHOW_TEXT, null);
+                const toChange = [];
+                while (walker.nextNode()) {
+                    const n = walker.currentNode;
+                    if (!n.nodeValue) continue;
+                    const translated = translateRoundLabel(n.nodeValue);
+                    if (translated !== n.nodeValue) toChange.push([n, translated]);
+                }
+                toChange.forEach(([n, v]) => { n.nodeValue = v; });
+            } catch (_) {}
         }
 
         // Ensure notes anchors call openProfitLink inline for consistency
@@ -966,6 +1197,7 @@
 
         // Initialize calendar
         function init() {
+            applyStaticTexts();
             updateCalendar();
             
             // Track page view after a short delay to ensure page is fully loaded
