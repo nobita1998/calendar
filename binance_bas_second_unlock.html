@@ -426,6 +426,8 @@
             out = out.replace(/至少|最少/g, 'at least');
             out = out.replace(/最低/g, 'minimum');
             out = out.replace(/最多|最高/g, 'up to');
+            out = out.replace(/第\s*(\d+)\s*[\-~—–]\s*(\d+)\s*周/g, (m,a,b)=>`Weeks ${a}–${b}`);
+            out = out.replace(/第\s*([一二三四五六七八九十]+)\s*[\-~—–]\s*([一二三四五六七八九十]+)\s*周/g, (m,a,b)=>`Weeks ${toNumberToken(a)}–${toNumberToken(b)}`);
             out = out.replace(/第\s*(\d+)\s*周/g, (m,n)=>`Week ${n}`);
             out = out.replace(/第\s*([一二三四五六七八九十]+)\s*周/g, (m,cn)=>`Week ${toNumberToken(cn)}`);
             out = out.replace(/任务\s*(\d+)/g, (m,n)=>`Task ${n}`);
