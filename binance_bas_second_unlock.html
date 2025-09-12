@@ -394,7 +394,61 @@
           const lotTitle = document.querySelector('.lottery-title');
           if (lotTitle) lotTitle.textContent = t.lottery;
         }
+
+        // Map Chinese numerals (up to 99) to integers
+        function cnNumToInt(s) {
+          if (!s) return NaN;
+          const map = { '一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9 };
+          if (!s.includes('十')) return map[s] || NaN;
+          const [left,right] = s.split('十');
+          const tens = left === '' ? 1 : (map[left]||0);
+          const units = right === '' ? 0 : (map[right]||0);
+          return tens*10+units;
+        }
+
+        function toNumberToken(token){
+          if (/^\d+$/.test(token)) return token;
+          const n = cnNumToInt(token);
+          return isNaN(n) ? token : String(n);
+        }
+
+        // Translate detail texts: 第X周 / 任务X / 抽奖任务 → Week X / Task X / Lottery Tasks
+        function translateDetailText(str){
+          if (currentLang !== 'en') return str;
+          let out = String(str||'');
+          try {
+            out = out.replace(/抽奖任务/g, 'Lottery Tasks');
+            out = out.replace(/第\s*(\d+)\s*周/g, (m,n)=>`Week ${n}`);
+            out = out.replace(/第\s*([一二三四五六七八九十]+)\s*周/g, (m,cn)=>`Week ${toNumberToken(cn)}`);
+            out = out.replace(/任务\s*(\d+)/g, (m,n)=>`Task ${n}`);
+            out = out.replace(/任务\s*([一二三四五六七八九十]+)/g, (m,cn)=>`Task ${toNumberToken(cn)}`);
+            // Common standalone words
+            out = out.replace(/任务/g, 'Task');
+            out = out.replace(/周/g, 'Week');
+          } catch(_){}
+          return out;
+        }
+
+        function applyDetailTranslations(){
+          if (currentLang !== 'en') return;
+          // Titles inside cards
+          document.querySelectorAll('.task-title').forEach(el=>{ el.textContent = translateDetailText(el.textContent); });
+          // Any text in lottery section items
+          const lot = document.querySelector('.lottery-section');
+          if (lot) {
+            const walker = document.createTreeWalker(lot, NodeFilter.SHOW_TEXT, null);
+            const updates = [];
+            while (walker.nextNode()) {
+              const node = walker.currentNode;
+              const newVal = translateDetailText(node.nodeValue);
+              if (newVal !== node.nodeValue) updates.push([node,newVal]);
+            }
+            updates.forEach(([n,v])=>{ n.nodeValue = v; });
+          }
+        }
+
         applyI18n();
+        applyDetailTranslations();
       })();
     </script>
 </body>
