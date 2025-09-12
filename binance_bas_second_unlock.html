@@ -463,7 +463,7 @@
           // Extra mappings: slots / rank range / AVA top-N extra reward / 枚/人
           try {
             function fmtEN(num){ try { return Number(num).toLocaleString('en-US'); } catch(_){ return num; } }
-            function toNumberToken(token){ return token; }
+            // keep toNumberToken defined above (supports Chinese numerals)
             out = out.replace(/名额/g, 'Slots');
             out = out.replace(/AVA\s*排名前\s*(\d+)\s*额外\s*Reward/gi, (m,n)=>`Extra reward for AVA top ${fmtEN(n)}`);
             out = out.replace(/第\s*(\d+)\s*[\-~—–]\s*(\d+)\s*名/g, (m,a,b)=>`Rank ${fmtEN(a)}–${fmtEN(b)}`);
