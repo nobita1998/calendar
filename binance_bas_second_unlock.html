@@ -430,6 +430,10 @@
             out = out.replace(/中奖率\s*[:：]\s*/g, 'Win rate: ');
             out = out.replace(/约\s*(\d+)\s*%/g, (m,n)=>`~${n}%`);
             out = out.replace(/(\d{1,9})\s*人中奖/g, (m,n)=>`${fmtEN(n)} winners`);
+            // Per person and coins: 每人: 150 币 / 每人150币 / 150 币
+            out = out.replace(/每人\s*(\d{1,9})\s*币/g, (m,n)=>`Per person ${fmtEN(n)} coins`);
+            out = out.replace(/每人\s*[:：]\s*/g, 'Per person: ');
+            out = out.replace(/(\d{1,9})\s*币/g, (m,n)=>`${fmtEN(n)} coins`);
           } catch(_){}
           return out;
         }
