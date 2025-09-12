@@ -407,6 +407,10 @@
             out = out.replace(/每人\s*(\d{1,9})\s*币/g, (m,n)=>`Per person ${fmtEN(n)} coins`);
             out = out.replace(/每人\s*[:：]\s*/g, 'Per person: ');
             out = out.replace(/(\d{1,9})\s*币/g, (m,n)=>`${fmtEN(n)} coins`);
+            // Renjun (per person) variants
+            out = out.replace(/人均\s*(\d{1,9})\s*币/g, (m,n)=>`Per person ${fmtEN(n)} coins`);
+            out = out.replace(/人均\s*[:：]\s*/g, 'Per person: ');
+            out = out.replace(/人均/g, 'Per person');
             out = out.replace(/今天|今日/g, 'Today');
             out = out.replace(/昨天/g, 'Yesterday');
             out = out.replace(/明天/g, 'Tomorrow');
