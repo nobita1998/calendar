@@ -230,6 +230,20 @@
           out = out.replace(/昨天/g, 'Yesterday');
           out = out.replace(/明天/g, 'Tomorrow');
         } catch(_){}
+        // Extra mappings: slots / rank range / AVA top-N extra reward / 枚/人
+        try {
+          function fmtEN(num){ try { return Number(num).toLocaleString('en-US'); } catch(_){ return num; } }
+          function toNumberToken(token){ return token; }
+          out = out.replace(/名额/g, 'Slots');
+          out = out.replace(/AVA\s*排名前\s*(\d+)\s*额外\s*Reward/gi, (m,n)=>`Extra reward for AVA top ${fmtEN(n)}`);
+          out = out.replace(/第\s*(\d+)\s*[\-~—–]\s*(\d+)\s*名/g, (m,a,b)=>`Rank ${fmtEN(a)}–${fmtEN(b)}`);
+          out = out.replace(/第\s*(\d+)\s*名/g, (m,a)=>`Rank ${fmtEN(a)}`);
+          out = out.replace(/第\s*([一二三四五六七八九十]+)\s*[\-~—–]\s*([一二三四五六七八九十]+)\s*名/g, (m,a,b)=>`Rank ${a}–${b}`);
+          out = out.replace(/第\s*([一二三四五六七八九十]+)\s*名/g, (m,a)=>`Rank ${a}`);
+          out = out.replace(/(\d{1,9})\s*枚\s*\/\s*人/g, (m,n)=>`${fmtEN(n)} coins per person`);
+          out = out.replace(/\b枚\s*\/\s*人\b/g, 'coins per person');
+          out = out.replace(/(\d{1,9})\s*枚\b/g, (m,n)=>`${fmtEN(n)} coins`);
+        } catch(_){}
         // Spacing fix-ups
         try {
           out = out.replace(/(Per person)(?=[A-Za-z])/g, '$1 ');
