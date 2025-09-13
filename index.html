@@ -172,6 +172,8 @@
         }
         .promo-close:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.5); transform: rotate(90deg); }
         .promo-close:focus { outline: 2px solid #0ecb81; outline-offset: 2px; }
+        /* Binance accent */
+        .promo-banner.bn { border-left-color: #f0b90b; }
 
         @media (max-width: 768px) {
             .promo-banner { flex-direction: column; align-items: center; text-align: center; }
@@ -660,6 +662,11 @@
         </div>
     </div>
 
+    <!-- Binance DEX promo (code only, no close) at page bottom -->
+    <div class="promo-banner bn" id="binancePromo" role="region" aria-label="Binance DEX Promo">
+        <div class="promo-text"><span id="binancePromoText">Binance DEX 邀请码：<a href="https://web3.binance.com/referral?ref=XFFHVEG1" class="promo-code-link" target="_blank" rel="noopener">XFFHVEG1</a>（节省30%手续费）</span></div>
+    </div>
+
     <!-- OKX DEX promo (code only, no close) at page bottom -->
     <div class="promo-banner" id="okxPromo" role="region" aria-label="OKX DEX Promo">
         <div class="promo-text"><span id="okxPromoText">OKX DEX 邀请码：<a href="https://web3.okx.com/join/NOBITA" class="promo-code-link" target="_blank" rel="noopener">NOBITA</a>（节省20%手续费）</span></div>
@@ -677,6 +684,8 @@
                 today: '今天',
                 author: '作者: NNNNNNOBITA',
                 profitLink: '收益计算',
+                binancePromoPrefix: 'Binance DEX 邀请码：',
+                binancePromoSuffix: '（节省30%手续费）',
                 okxPromoPrefix: 'OKX DEX 邀请码：',
                 okxPromoSuffix: '（节省20%手续费）'
             },
@@ -688,6 +697,8 @@
                 today: 'Today',
                 author: 'Author: NNNNNNOBITA',
                 profitLink: 'Profit Calc',
+                binancePromoPrefix: 'Binance DEX referral: ',
+                binancePromoSuffix: ' (Save 30% fees)',
                 okxPromoPrefix: 'OKX DEX referral: ',
                 okxPromoSuffix: ' (Save 20% fees)'
             }
@@ -720,7 +731,26 @@
                 if (btns[0]) btns[0].textContent = t('prev');
                 if (btns[1]) btns[1].textContent = t('next');
             }
-            // Promo banner text with hyperlink code
+            // Promo banner text with hyperlink code (Binance)
+            const promoBn = document.getElementById('binancePromo');
+            if (promoBn) {
+                const bnEl = document.getElementById('binancePromoText');
+                if (bnEl) {
+                    const prefix = t('binancePromoPrefix');
+                    const suffix = t('binancePromoSuffix');
+                    while (bnEl.firstChild) bnEl.removeChild(bnEl.firstChild);
+                    const link = document.createElement('a');
+                    link.href = 'https://web3.binance.com/referral?ref=XFFHVEG1';
+                    link.target = '_blank';
+                    link.rel = 'noopener';
+                    link.className = 'promo-code-link';
+                    link.textContent = 'XFFHVEG1';
+                    // counting handled by global capture listener
+                    bnEl.append(document.createTextNode(prefix), link, document.createTextNode(suffix));
+                }
+            }
+
+            // Promo banner text with hyperlink code (OKX)
             const promo = document.getElementById('okxPromo');
             if (promo) {
                 const textEl = document.getElementById('okxPromoText');
@@ -735,7 +765,7 @@
                     link.rel = 'noopener';
                     link.className = 'promo-code-link';
                     link.textContent = 'NOBITA';
-                    try { link.addEventListener('click', trackClick); } catch (_) {}
+                    // counting handled by global capture listener
                     textEl.append(document.createTextNode(prefix), link, document.createTextNode(suffix));
                 }
             }
