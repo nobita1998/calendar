@@ -127,6 +127,63 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
+        /* --- OKX DEX promo banner --- */
+        .promo-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 14px;
+            background: linear-gradient(135deg, #101214 0%, #1b1f24 100%);
+            border-left: 4px solid #0ecb81;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            color: #e6f4ea;
+            border-radius: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .promo-banner strong { color: #0ecb81; }
+        .promo-text { font-size: 14px; line-height: 1.4; word-break: break-word; }
+        .promo-code-link { color: #0ecb81; font-weight: 800; text-decoration: underline; }
+        .promo-code-link:hover { color: #22e19a; }
+        .promo-actions { display: inline-flex; align-items: center; gap: 8px; }
+        .promo-cta {
+            background: linear-gradient(135deg, #0ecb81 0%, #1dd1a1 100%);
+            color: #000;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(14,203,129,0.35);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .promo-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(14,203,129,0.5); }
+        .promo-close {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.25);
+            color: #e6f4ea;
+            width: 28px; height: 28px;
+            border-radius: 6px;
+            font-size: 16px;
+            line-height: 1;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+        }
+        .promo-close:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.5); transform: rotate(90deg); }
+        .promo-close:focus { outline: 2px solid #0ecb81; outline-offset: 2px; }
+
+        @media (max-width: 768px) {
+            .promo-banner { flex-direction: column; align-items: center; text-align: center; }
+            .promo-text { font-size: 15px; }
+        }
+
+        @media (max-width: 480px) {
+            .promo-text { font-size: 13px; }
+            .promo-cta { padding: 6px 10px; font-size: 12px; }
+            .promo-banner { gap: 10px; padding: 10px 12px; }
+        }
+
         .nav-button {
             background: linear-gradient(135deg, #0ecb81 0%, #1dd1a1 100%);
             border: none;
@@ -603,6 +660,11 @@
         </div>
     </div>
 
+    <!-- OKX DEX promo (code only, no close) at page bottom -->
+    <div class="promo-banner" id="okxPromo" role="region" aria-label="OKX DEX Promo">
+        <div class="promo-text"><span id="okxPromoText">OKX DEX 邀请码：<a href="https://web3.okx.com/join/NOBITA" class="promo-code-link" target="_blank" rel="noopener">NOBITA</a>（节省20%手续费）</span></div>
+    </div>
+
     <script>
         // --- i18n setup ---
         const LANG_STORAGE_KEY = 'calendar_lang';
@@ -614,7 +676,9 @@
                 weekdays: ['周一','周二','周三','周四','周五','周六','周日'],
                 today: '今天',
                 author: '作者: NNNNNNOBITA',
-                profitLink: '收益计算'
+                profitLink: '收益计算',
+                okxPromoPrefix: 'OKX DEX 邀请码：',
+                okxPromoSuffix: '（节省20%手续费）'
             },
             en: {
                 title: 'Binance Booster Unlock Calendar',
@@ -623,7 +687,9 @@
                 weekdays: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
                 today: 'Today',
                 author: 'Author: NNNNNNOBITA',
-                profitLink: 'Profit Calc'
+                profitLink: 'Profit Calc',
+                okxPromoPrefix: 'OKX DEX referral: ',
+                okxPromoSuffix: ' (Save 20% fees)'
             }
         };
 
@@ -654,6 +720,25 @@
                 if (btns[0]) btns[0].textContent = t('prev');
                 if (btns[1]) btns[1].textContent = t('next');
             }
+            // Promo banner text with hyperlink code
+            const promo = document.getElementById('okxPromo');
+            if (promo) {
+                const textEl = document.getElementById('okxPromoText');
+                if (textEl) {
+                    const prefix = t('okxPromoPrefix');
+                    const suffix = t('okxPromoSuffix');
+                    // Rebuild content to ensure language switch works
+                    while (textEl.firstChild) textEl.removeChild(textEl.firstChild);
+                    const link = document.createElement('a');
+                    link.href = 'https://web3.okx.com/join/NOBITA';
+                    link.target = '_blank';
+                    link.rel = 'noopener';
+                    link.className = 'promo-code-link';
+                    link.textContent = 'NOBITA';
+                    try { link.addEventListener('click', trackClick); } catch (_) {}
+                    textEl.append(document.createTextNode(prefix), link, document.createTextNode(suffix));
+                }
+            }
             // Toggle buttons
             const zhBtn = document.getElementById('langZh');
             const enBtn = document.getElementById('langEn');
@@ -666,6 +751,8 @@
             }
             renderWeekdays();
         }
+
+        // OKX promo displayed by default; no close button per requirements
 
         function setLanguage(lang) {
             if (!i18n[lang]) return;
@@ -1167,6 +1254,7 @@
 
         // Unified "down" endpoint and reliable ping
         const DOWN_ENDPOINT = 'https://api.counterapi.dev/v2/nobita/x-nobita/down';
+        const CALENDAR_DOWN_ENDPOINT = 'https://api.counterapi.dev/v2/nobita/calendar/down';
 
         function pingDown() {
             try {
@@ -1179,6 +1267,28 @@
             try {
                 fetch(DOWN_ENDPOINT, { method: 'GET', mode: 'no-cors', keepalive: true }).catch(() => {});
             } catch (e) { /* no-op */ }
+            return true;
+        }
+
+        function pingCalendarDown() {
+            try {
+                fetch(CALENDAR_DOWN_ENDPOINT, {
+                    method: 'GET',
+                    mode: 'no-cors',
+                    keepalive: true,
+                    headers: {
+                        'Authorization': 'Bearer ut_ng8ohFJIAYIsFOu2vFgHIhPvn6k51wjzHIxriZZx'
+                    }
+                }).catch(() => {});
+            } catch (e) {
+                // As a last resort, try beacon without headers
+                try {
+                    if (navigator.sendBeacon) {
+                        const blob = new Blob([], { type: 'text/plain' });
+                        navigator.sendBeacon(CALENDAR_DOWN_ENDPOINT, blob);
+                    }
+                } catch (_) { /* no-op */ }
+            }
             return true;
         }
 
@@ -1302,6 +1412,30 @@
             }
             return true;
         }
+
+        // Track OKX invite code clicks via calendar/down endpoint
+        function trackOkxClick(event) {
+            const currentTime = Date.now();
+            const timeSinceLastClick = currentTime - lastClickTime;
+            // Prevent duplicate calls within 2 seconds
+            if (timeSinceLastClick < 2000) {
+                return true;
+            }
+            lastClickTime = currentTime;
+            try { pingCalendarDown(); } catch (_) {}
+            return true;
+        }
+
+        // Intercept clicks on the promo code link early to avoid duplicate handlers
+        document.addEventListener('click', function(e) {
+            let node = e.target;
+            if (node && node.nodeType === 3) node = node.parentElement; // text node -> element
+            const link = node && node.closest && node.closest('a.promo-code-link');
+            if (!link) return;
+            try { trackOkxClick(e); } catch (_) {}
+            // Keep default navigation; just stop further JS handlers
+            try { e.stopPropagation(); } catch (_) {}
+        }, true);
 
         // Delegate clicks on profit links to ensure reliable tracking
         document.addEventListener('click', function(e) {
