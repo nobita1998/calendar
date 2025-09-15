@@ -1,9 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Binance Booster 奖励解锁日历</title>
+    <link rel="icon" type="image/png" sizes="1024x1024" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
     <style>
         * {
             margin: 0;
@@ -423,7 +425,7 @@
             box-shadow: 0 2px 4px rgba(240, 185, 11, 0.3);
         }
 
-        /* 移动端适配 */
+        /* ç§»åŠ¨ç«¯é€‚é… */
         @media (max-width: 768px) {
             body {
                 padding: 10px;
@@ -664,12 +666,12 @@
 
     <!-- Binance DEX promo (code only, no close) at page bottom -->
     <div class="promo-banner bn" id="binancePromo" role="region" aria-label="Binance DEX Promo">
-        <div class="promo-text"><span id="binancePromoText">Binance DEX 邀请码：<a href="https://web3.binance.com/referral?ref=XFFHVEG1" class="promo-code-link" target="_blank" rel="noopener">XFFHVEG1</a>（节省30%手续费）</span></div>
+        <div class="promo-text"><span id="binancePromoText">Binance DEX 邀请码：<a href="https://web3.binance.com/referral?ref=XFFHVEG1" class="promo-code-link" target="_blank" rel="noopener">XFFHVEG1</a>（省30%手续费）</span></div>
     </div>
 
     <!-- OKX DEX promo (code only, no close) at page bottom -->
     <div class="promo-banner" id="okxPromo" role="region" aria-label="OKX DEX Promo">
-        <div class="promo-text"><span id="okxPromoText">OKX DEX 邀请码：<a href="https://web3.okx.com/join/NOBITA" class="promo-code-link" target="_blank" rel="noopener">NOBITA</a>（节省20%手续费）</span></div>
+        <div class="promo-text"><span id="okxPromoText">OKX DEX 邀请码：<a href="https://web3.okx.com/join/NOBITA" class="promo-code-link" target="_blank" rel="noopener">NOBITA</a>（省20%手续费）</span></div>
     </div>
 
     <script>
@@ -677,17 +679,17 @@
         const LANG_STORAGE_KEY = 'calendar_lang';
         const i18n = {
             zh: {
-                title: 'Binance Booster 解锁日历',
-                prev: '上一月',
-                next: '下一月',
+                title: 'Binance Booster 奖励解锁日历',
+                prev: '上个月',
+                next: '下个月',
                 weekdays: ['周一','周二','周三','周四','周五','周六','周日'],
                 today: '今天',
                 author: '作者: NNNNNNOBITA',
                 profitLink: '收益计算',
                 binancePromoPrefix: 'Binance DEX 邀请码：',
-                binancePromoSuffix: '（节省30%手续费）',
+                binancePromoSuffix: '（省30%手续费）',
                 okxPromoPrefix: 'OKX DEX 邀请码：',
-                okxPromoSuffix: '（节省20%手续费）'
+                okxPromoSuffix: '（省20%手续费）'
             },
             en: {
                 title: 'Binance Booster Unlock Calendar',
@@ -792,38 +794,38 @@
             updateCalendar();
         }
 
-        // Translate Chinese round labels like "第XX次解锁" to English when needed
+        // Translate Chinese round labels like "ç¬¬XXæ¬¡è§£é”" to English when needed
         function translateRoundLabel(input) {
             const src = String(input || '');
             if (currentLang !== 'en') return src; // keep Chinese in ZH mode
             let out = src;
             try {
                 // Normalize TGE parentheses
-                out = out.replace(/[（(]\s*TGE\s*[)）]/gi, 'TGE');
+                out = out.replace(/[ï¼ˆ(]\s*TGE\s*[)ï¼‰]/gi, 'TGE');
                 // Common phrases
-                out = out.replace(/首次解锁/g, 'Round 1 Unlock');
-                // Patterns: 第N次解锁 / 第N轮解锁
-                out = out.replace(/第\s*(\d+)\s*次解锁/g, (m, n) => `Round ${n} Unlock`);
-                out = out.replace(/第\s*(\d+)\s*轮解锁/g, (m, n) => `Round ${n} Unlock`);
-                // Generic 解锁 -> Unlock (only if it appears alone or with punctuation)
-                out = out.replace(/解锁/g, 'Unlock');
+                out = out.replace(/é¦–æ¬¡è§£é”/g, 'Round 1 Unlock');
+                // Patterns: ç¬¬Næ¬¡è§£é” / ç¬¬Nè½®è§£é”
+                out = out.replace(/ç¬¬\s*(\d+)\s*æ¬¡è§£é”/g, (m, n) => `Round ${n} Unlock`);
+                out = out.replace(/ç¬¬\s*(\d+)\s*è½®è§£é”/g, (m, n) => `Round ${n} Unlock`);
+                // Generic è§£é” -> Unlock (only if it appears alone or with punctuation)
+                out = out.replace(/è§£é”/g, 'Unlock');
             } catch (_) { /* noop */ }
             return out;
         }
 
-        // --- Enhanced mapping for 第一次/第N次 (and 轮) ---
+        // --- Enhanced mapping for ç¬¬ä¸€æ¬¡/ç¬¬Næ¬¡ (and è½®) ---
         // Override translateRoundLabel with richer rules including Chinese numerals.
         // Keeps Chinese in ZH mode; English mapping only when currentLang === 'en'.
         function cnNumToInt(s) {
             if (!s) return NaN;
-            const map = { '一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9 };
-            // Handle 1-99 using 十
+            const map = { 'ä¸€':1,'äºŒ':2,'ä¸‰':3,'å››':4,'äº”':5,'å…­':6,'ä¸ƒ':7,'å…«':8,'ä¹':9 };
+            // Handle 1-99 using å
             let tens = 0, units = 0;
-            const hasShi = s.includes('十');
+            const hasShi = s.includes('å');
             if (!hasShi) {
                 return map[s] || NaN;
             }
-            const parts = s.split('十');
+            const parts = s.split('å');
             const left = parts[0];
             const right = parts[1];
             if (left === '') tens = 1; else tens = map[left] || 0;
@@ -837,41 +839,41 @@
             if (currentLang !== 'en') return src;
             let out = src;
             try {
-                // Normalize (TGE)/(（TGE）) → TGE
-                out = out.replace(/[()（）]\s*TGE\s*[()（）]/gi, 'TGE');
+                // Normalize (TGE)/(ï¼ˆTGEï¼‰) â†’ TGE
+                out = out.replace(/[()ï¼ˆï¼‰]\s*TGE\s*[()ï¼ˆï¼‰]/gi, 'TGE');
 
                 // 1) Exact phrases first
                 out = out.replace(/第一次解锁/g, 'Round 1 Unlock');
-                out = out.replace(/第一次(?![\u4e00-\u9fa5])/g, 'Round 1');
-                out = out.replace(/首次解锁/g, 'Round 1 Unlock');
-                out = out.replace(/首次(?![\u4e00-\u9fa5])/g, 'Round 1');
+                out = out.replace(/ç¬¬ä¸€æ¬¡(?![\u4e00-\u9fa5])/g, 'Round 1');
+                out = out.replace(/é¦–æ¬¡è§£é”/g, 'Round 1 Unlock');
+                out = out.replace(/é¦–æ¬¡(?![\u4e00-\u9fa5])/g, 'Round 1');
 
-                // 2) 第N次/第N轮 with digits
-                out = out.replace(/第\s*(\d+)\s*次解锁/g, (m, n) => `Round ${n} Unlock`);
-                out = out.replace(/第\s*(\d+)\s*次(?!\s*解锁)/g, (m, n) => `Round ${n}`);
-                out = out.replace(/第\s*(\d+)\s*轮解锁/g, (m, n) => `Round ${n} Unlock`);
-                out = out.replace(/第\s*(\d+)\s*轮(?!\s*解锁)/g, (m, n) => `Round ${n}`);
+                // 2) ç¬¬Næ¬¡/ç¬¬Nè½® with digits
+                out = out.replace(/ç¬¬\s*(\d+)\s*æ¬¡è§£é”/g, (m, n) => `Round ${n} Unlock`);
+                out = out.replace(/ç¬¬\s*(\d+)\s*æ¬¡(?!\s*è§£é”)/g, (m, n) => `Round ${n}`);
+                out = out.replace(/ç¬¬\s*(\d+)\s*è½®è§£é”/g, (m, n) => `Round ${n} Unlock`);
+                out = out.replace(/ç¬¬\s*(\d+)\s*è½®(?!\s*è§£é”)/g, (m, n) => `Round ${n}`);
 
-                // 3) 第[中文数字]次/轮 with Chinese numerals 1-99
-                out = out.replace(/第\s*([一二三四五六七八九十]+)\s*次解锁/g, (m, cn) => {
+                // 3) ç¬¬[ä¸­æ–‡æ•°å­—]æ¬¡/è½® with Chinese numerals 1-99
+                out = out.replace(/ç¬¬\s*([ä¸€äºŒä¸‰å››äº”å…­ä¸ƒå…«ä¹å]+)\s*æ¬¡è§£é”/g, (m, cn) => {
                     const n = cnNumToInt(cn);
                     return isNaN(n) ? m : `Round ${n} Unlock`;
                 });
-                out = out.replace(/第\s*([一二三四五六七八九十]+)\s*次(?!\s*解锁)/g, (m, cn) => {
+                out = out.replace(/ç¬¬\s*([ä¸€äºŒä¸‰å››äº”å…­ä¸ƒå…«ä¹å]+)\s*æ¬¡(?!\s*è§£é”)/g, (m, cn) => {
                     const n = cnNumToInt(cn);
                     return isNaN(n) ? m : `Round ${n}`;
                 });
-                out = out.replace(/第\s*([一二三四五六七八九十]+)\s*轮解锁/g, (m, cn) => {
+                out = out.replace(/ç¬¬\s*([ä¸€äºŒä¸‰å››äº”å…­ä¸ƒå…«ä¹å]+)\s*è½®è§£é”/g, (m, cn) => {
                     const n = cnNumToInt(cn);
                     return isNaN(n) ? m : `Round ${n} Unlock`;
                 });
-                out = out.replace(/第\s*([一二三四五六七八九十]+)\s*轮(?!\s*解锁)/g, (m, cn) => {
+                out = out.replace(/ç¬¬\s*([ä¸€äºŒä¸‰å››äº”å…­ä¸ƒå…«ä¹å]+)\s*è½®(?!\s*è§£é”)/g, (m, cn) => {
                     const n = cnNumToInt(cn);
                     return isNaN(n) ? m : `Round ${n}`;
                 });
 
-                // 4) Generic 解锁 → Unlock (after specific patterns)
-                out = out.replace(/解锁/g, 'Unlock');
+                // 4) Generic è§£é” â†’ Unlock (after specific patterns)
+                out = out.replace(/è§£é”/g, 'Unlock');
             } catch (_) { /* noop */ }
             return out;
         }
@@ -932,7 +934,7 @@
                             "profitLink": null
                         },
                         {
-                            "round": "第五次解锁",
+                            "round": "ç¬¬äº”æ¬¡è§£é”",
                             "daysFromTGE": 120,
                             "period": "Week10-12",
                             "profitLink": null
@@ -960,7 +962,7 @@
                             "round": "第三次解锁",
                             "daysFromTGE": 60,
                             "period": "Week5-8",
-                            "profitLink": "https://x.com/NNNNNNOBITA/status/1963789334290837605"
+                            "profitLink": "binance_xny_third_unlock.html"
                         },
                         {
                             "round": "第四次解锁",
@@ -1156,8 +1158,8 @@
                 // Accessibility label
                 const ariaLabel = hasEvents
                     ? (dayProfitLink
-                        ? `aria-label="${unlockEventList[0].token} ${unlockEventList[0].date} 收益测算，点击打开"`
-                        : `aria-label="${unlockEventList[0].token} ${unlockEventList[0].date} 解锁信息"`)
+                        ? `aria-label="${unlockEventList[0].token} ${unlockEventList[0].date} æ”¶ç›Šæµ‹ç®—ï¼Œç‚¹å‡»æ‰“å¼€"`
+                        : `aria-label="${unlockEventList[0].token} ${unlockEventList[0].date} è§£é”ä¿¡æ¯"`)
                     : '';
 
                 // Key handlers for accessibility
@@ -1191,8 +1193,7 @@
             ];
             return `${currentYear}年${months[currentMonth]}`;
         }
-
-        function generateNotes() {
+function generateNotes() {
             if (!unlockData) return '';
 
             const targetMonthStart = new Date(currentYear, currentMonth, 1);
@@ -1217,7 +1218,7 @@
 
                         const unlockDateStr = unlockDate.toLocaleDateString(getLocale());
                         const profitLinkHTML = unlock.profitLink ? 
-                            `<a href="${unlock.profitLink}" class="profit-link" onclick="trackProfitClick(event)">收益测算</a>` : '';
+                            `<a href="${unlock.profitLink}" class="profit-link" onclick="trackProfitClick(event)">æ”¶ç›Šæµ‹ç®—</a>` : '';
                         
                         tokenNotesHTML += `
                             <div class="note-item">
@@ -1276,7 +1277,7 @@
                     if (!href) return;
                     a.setAttribute('onclick', `return openProfitLink('${href}', event)`);
                     if (!a.textContent || a.textContent.trim().length < 2) {
-                        a.textContent = '收益预览';
+                        a.textContent = 'æ”¶ç›Šé¢„è§ˆ';
                     }
                 });
             } catch (_) {}
@@ -1483,3 +1484,6 @@
     </script>
 </body>
 </html>
+
+
+

@@ -1,0 +1,442 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binance Booster - XNY 第三期解锁</title>
+  <link rel="icon" type="image/png" sizes="1024x1024" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #0c0c0f 0%, #1a1a23 100%);
+      color: #ffffff;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(23, 23, 31, 0.8);
+      border-radius: 16px;
+      border: 1px solid #2b2b40;
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(240, 185, 11, 0.1);
+    }
+
+    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
+
+    .title {
+      font-size: 1.65em; /* reduced to avoid wrapping */
+      font-weight: bold;
+      background: linear-gradient(45deg, #f0b90b, #fcd535);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+
+    .subtitle { color: #848e9c; font-size: 1.1em; }
+
+    /* Progress tasks: four columns, each with a week header + five tasks */
+    .tasks-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+    .tasks-column { display: flex; flex-direction: column; gap: 12px; }
+    .week-title { text-align: center; color: #f0b90b; font-weight: 700; letter-spacing: .5px; font-size: 0.95em; }
+
+    .task-card {
+      background: linear-gradient(135deg, rgba(240, 185, 11, 0.1) 0%, rgba(23, 23, 31, 0.9) 100%);
+      border: 1px solid #2b2b40;
+      border-radius: 12px;
+      padding: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .task-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #f0b90b, #fcd535); }
+
+    .task-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .task-title { font-size: 0.95em; font-weight: 600; color: #ffffff; }
+    .task-percentage { font-size: 1.05em; font-weight: bold; color: #f0b90b; }
+
+    .progress-bar { width: 100%; height: 8px; background: #2b2b40; border-radius: 4px; margin-bottom: 10px; overflow: hidden; position: relative; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #f0b90b, #fcd535); border-radius: 4px; position: relative; width: 0%; }
+
+    .task-footer { display: flex; justify-content: space-between; align-items: center; }
+    .task-reward { font-size: 0.95em; color: #26a69a; font-weight: 600;  }
+
+    .summary-card { background: linear-gradient(135deg, rgba(240, 185, 11, 0.2) 0%, rgba(23, 23, 31, 0.9) 100%); border: 2px solid #f0b90b; border-radius: 8px; padding: 15px; text-align: center; margin-bottom: 20px; }
+    .summary-title { font-size: 1.1em; color: #f0b90b; margin-bottom: 8px; font-weight: 600; }
+    .minimum-coins { font-size: 1.8em; font-weight: bold; color: #ffffff; text-shadow: 0 0 20px rgba(240, 185, 11, 0.8); }
+    .coin-symbol { color: #f0b90b; margin-left: 10px; }
+
+    .watermark { text-align: right; color: #848e9c; font-size: 1em; opacity: 0.8; margin-top: 20px; padding-right: 10px; }
+
+    .lottery-section { background: linear-gradient(135deg, rgba(38, 166, 154, 0.1) 0%, rgba(23, 23, 31, 0.9) 100%); border: 1px solid #2b2b40; border-radius: 12px; padding: 25px; }
+    .lottery-title { font-size:  1.45em; color: #26a69a; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+
+    /* New: four columns, each column = one week with two items */
+    .lottery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .lottery-column { display: flex; flex-direction: column; gap: 12px; }
+    .lottery-week-title { text-align: center; color: #26a69a; font-weight: 700; font-size: 0.95em; }
+
+    .lottery-item { background: rgba(38, 166, 154, 0.1); border: 1px solid rgba(38, 166, 154, 0.3); border-radius: 8px; padding: 16px; text-align: center; }
+    .lottery-emoji { font-size: 1.6em; margin-bottom: 8px; }
+    .lottery-rate { color: #26a69a; font-weight: 600; margin-bottom: 4px; font-size: 0.95em; }
+    .lottery-usdt { color: #cbd5e1; font-size: 0.9em; margin-top: 4px; }
+
+    /* Back link */
+    .back-link { display: inline-block; background: linear-gradient(135deg, #0ecb81 0%, #1dd1a1 100%); color: #000; font-weight: 700; padding: 8px 12px; border-radius: 8px; text-decoration: none; box-shadow: 0 2px 8px rgba(14,203,129,.3); }
+    .back-link:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(14,203,129,.5); }
+    .back-fixed { position: fixed; top: 16px; left: 16px; z-index: 1000; }
+
+    @media (max-width: 1024px) {
+      .tasks-grid { grid-template-columns: repeat(2, 1fr); }
+      .lottery-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      body { padding: 10px; }
+      .container { max-width: 100%; margin: 0; border-radius: 16px; padding: 20px; }
+      .header { margin-bottom: 20px; }
+      .title { font-size: 1.35em; }
+      .subtitle { font-size: 0.95em; }
+      .tasks-grid { grid-template-columns: 1fr; gap: 12px; }
+      .task-card { padding: 12px; border-radius: 10px; }
+      .task-title { font-size:  0.95em; }
+      .task-percentage { font-size:  1em; }
+      .progress-bar { height: 6px; }
+      .summary-card { padding: 12px; }
+      .lottery-section { padding: 16px; border-radius: 10px; }
+      .lottery-grid { grid-template-columns: 1fr; gap: 12px; }
+      .lottery-title { font-size:  1.2em; }
+      .lottery-item { padding: 14px; }
+      .back-link { padding: 6px 10px; font-size: 14px; }
+      .summary-title { font-size: 1em; }
+      .minimum-coins { font-size: 1.5em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="index.html" class="back-link" aria-label="返回" onclick="if (document.referrer && new URL(document.referrer).origin === location.origin) { history.back(); return false; }">返回日历</a>
+      <h1 class="title">Binance Booster - XNY 第三期解锁</h1>
+    </div>
+
+    <div class="tasks-grid" aria-label="进度任务" role="grid">
+        <div class="tasks-column" role="columnheader" aria-label="第一周">
+        <div class="week-title">第一周</div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 1</span><span class="task-percentage">99%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 99%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 101 枚</div></div>
+        </div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 2</span><span class="task-percentage">99%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 99%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 102 枚</div></div>
+        </div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 3</span><span class="task-percentage">98%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 98%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 102 枚</div></div>
+        </div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 4</span><span class="task-percentage">77%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 77%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 208 枚</div></div>
+        </div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 5</span><span class="task-percentage">78%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 78%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 322 枚</div></div>
+        </div>
+      </div>      <div class="tasks-column" role="columnheader" aria-label="第二周">
+        <div class="week-title">第二周</div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 1</span><span class="task-percentage">95%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 95%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 106 枚</div></div>
+        </div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 2</span><span class="task-percentage">94%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 94%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 127 枚</div></div>
+        </div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 3</span><span class="task-percentage">94%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 94%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 128 枚</div></div>
+        </div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 4</span><span class="task-percentage">81%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 81%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 198 枚</div></div>
+        </div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 5</span><span class="task-percentage">79%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 79%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 202 枚</div></div>
+        </div>
+      </div>      <div class="tasks-column" role="columnheader" aria-label="第三周">
+        <div class="week-title">第三周</div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 1</span><span class="task-percentage">99%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 99%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 101 枚</div></div>
+        </div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 2</span><span class="task-percentage">98%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 98%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 122 枚</div></div>
+        </div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 3</span><span class="task-percentage">98%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 98%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 122 枚</div></div>
+        </div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 4</span><span class="task-percentage">88%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 88%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 181 枚</div></div>
+        </div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 5</span><span class="task-percentage">87%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 87%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 183 枚</div></div>
+        </div>
+      </div>      <div class="tasks-column" role="columnheader" aria-label="第四周">
+        <div class="week-title">第四周</div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 1</span><span class="task-percentage">100%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 100%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 100 枚</div></div>
+        </div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 2</span><span class="task-percentage">100%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 100%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 120 枚</div></div>
+        </div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 3</span><span class="task-percentage">100%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 100%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 120 枚</div></div>
+        </div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 4</span><span class="task-percentage">100%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 100%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 160 枚</div></div>
+        </div>
+        <div class="task-card" role="gridcell">
+          <div class="task-header"><span class="task-title">任务 5</span><span class="task-percentage">100%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 100%"></div></div>
+          <div class="task-footer"><div class="task-reward">每人: 160 枚</div></div>
+        </div>
+      </div>
+  </div><div class="summary-card" aria-live="polite">
+      <div class="summary-title">汇总</div>
+      <div class="minimum-coins">2965<span class="coin-symbol"> XNY</span></div>
+    </div>
+
+    <div class="lottery-section">
+      <div class="lottery-title">抽奖任务</div>
+      <div class="lottery-grid">
+        <div class="lottery-column" aria-label="第1周">
+          <div class="lottery-week-title">第1周</div>
+          <div class="lottery-item" aria-label="第1周 万人抽奖">
+            <div class="lottery-rate">中奖名额: 50,000</div>
+            <div class="lottery-rate">中奖率: 95%</div>
+            <div class="lottery-reward">每人: 100 XNY</div>
+          </div>
+          <div class="lottery-item" aria-label="第1周 4万人抽奖">
+            <div class="lottery-rate">中奖名额: 40,000</div>
+            <div class="lottery-rate">中奖率: 100%</div>
+            <div class="lottery-reward">每人: 300 XNY</div>
+          </div>
+        </div>
+                <div class="lottery-column" aria-label="第2周">
+          <div class="lottery-week-title">第2周</div>
+          <div class="lottery-item" aria-label="第2周 万人抽奖">
+            <div class="lottery-rate">中奖名额: 50,000</div>
+            <div class="lottery-rate">中奖率: 95%</div>
+            <div class="lottery-reward">每人: 100 XNY</div>
+          </div>
+          <div class="lottery-item" aria-label="第2周 4万人抽奖">
+            <div class="lottery-rate">中奖名额: 40,000</div>
+            <div class="lottery-rate">中奖率: 100%</div>
+            <div class="lottery-reward">每人: 300 XNY</div>
+          </div>
+        </div>        <div class="lottery-column" aria-label="第3周">
+          <div class="lottery-week-title">第3周</div>
+          <div class="lottery-item" aria-label="第3周 万人抽奖">
+            <div class="lottery-rate">中奖名额: 50,000</div>
+            <div class="lottery-rate">中奖率: 95%</div>
+            <div class="lottery-reward">每人: 100 XNY</div>
+          </div>
+          <div class="lottery-item" aria-label="第3周 4万人抽奖">
+            <div class="lottery-rate">中奖名额: 40,000</div>
+            <div class="lottery-rate">中奖率: 90%</div>
+            <div class="lottery-reward">每人: 300 XNY</div>
+          </div>
+        </div>        <div class="lottery-column" aria-label="第4周">
+          <div class="lottery-week-title">第4周</div>
+          <div class="lottery-item" aria-label="第4周 万人抽奖">
+            <div class="lottery-rate">中奖名额: 50,000</div>
+            <div class="lottery-rate">中奖率: 50%</div>
+            <div class="lottery-reward">每人: 100 XNY</div>
+          </div>
+          <div class="lottery-item" aria-label="第4周 4万人抽奖">
+            <div class="lottery-rate">中奖名额: 40,000</div>
+            <div class="lottery-rate">中奖率: 70%</div>
+            <div class="lottery-reward">每人: 300 XNY</div>
+          </div>
+        </div></div>
+      </div></div>
+    </div>
+
+          <div class="watermark">X: @NNNNNNOBITA</div>
+  </div>
+
+  <!-- i18n & title wiring -->
+  <script>
+    (function() {
+      const LANG_STORAGE_KEY = 'calendar_lang';
+      const currentLang = (function(){ try { return localStorage.getItem(LANG_STORAGE_KEY) || 'zh'; } catch(_){ return 'zh'; } })();
+      const dict = {
+        zh: { back: '返回日历', summary: '汇总', lottery: '抽奖任务', roundFirst: '第一期解锁', roundSecond: '第二期解锁', roundThird: '第三期解锁', headPrefix: 'Binance Booster - ' },
+        en: { back: 'Back to Calendar', summary: 'Summary', lottery: 'Lottery Tasks', roundFirst: 'First Unlock', roundSecond: 'Second Unlock', roundThird: 'Third Unlock', headPrefix: 'Binance Booster - ' }
+      };
+      function getMetaFromPath(){
+        const p = (location.pathname || '').toLowerCase();
+        let token = 'XNY';
+        if (p.includes('bas')) token = 'BAS';
+        if (p.includes('hemi')) token = 'HEMI';
+        if (p.includes('holo')) token = 'HOLO';
+        if (p.includes('xny')) token = 'XNY';
+        const isFirst = /first/.test(p);
+        const isSecond = /second/.test(p);
+        const roundKey = isFirst ? 'roundFirst' : (isSecond ? 'roundSecond' : 'roundThird');
+        return { token, roundKey };
+      }
+      function applyI18n(){
+        try { document.documentElement.setAttribute('lang', currentLang === 'zh' ? 'zh-CN' : 'en-US'); } catch(_){ }
+        const meta = getMetaFromPath();
+        const t = dict[currentLang];
+        const titleStr = `${t.headPrefix}${meta.token} ${t[meta.roundKey]}`;
+        const h1 = document.querySelector('h1.title');
+        if (h1) h1.textContent = titleStr;
+        try { document.title = titleStr; } catch(_){ }
+        const back = document.querySelector('.back-link');
+        if (back) { back.textContent = t.back; back.setAttribute('aria-label', t.back); }
+        const sumTitle = document.querySelector('.summary-title');
+        if (sumTitle) sumTitle.textContent = t.summary;
+        const lotTitle = document.querySelector('.lottery-title');
+        if (lotTitle) lotTitle.textContent = t.lottery;
+      }
+      applyI18n();
+    })();
+  </script>
+  <script>
+    (function(){
+      function normalizeRewards(){
+  var nodes = document.querySelectorAll('.task-reward, .lottery-reward');
+  nodes.forEach(function(el){
+    var txt = (el.textContent || '').trim();
+    var m = txt.match(/^(\s*(?:每人|Per person)\s*:?\s*)(\d+(?:\.\d+)?)(\s*(?:XNY|枚|coins))?/i);
+    if (m) {
+      var n = Math.round(parseFloat(m[2]));
+      var suf = (m[3]||'').trim();
+      if (!suf) { suf = (/Per person/i.test(m[1]) ? 'coins' : '枚'); }
+      el.textContent = m[1] + n + ' ' + suf;
+    }
+  });
+}
+          var m2 = txt.match(/^(\s*Per person\s*:??\s*)(\d+(?:\.\d+)?)/i);
+          if (m2) { var n2 = Math.round(parseFloat(m2[2])); el.textContent = m2[1] + n2 + ' coins'; }
+        });
+      }
+      try { normalizeRewards(); } catch(e){}
+    })();
+  </script>
+    <script>
+    (function(){
+      function sumRewards(){
+        var nodes = document.querySelectorAll('.tasks-grid .task-reward');
+        var sum = 0;
+        nodes.forEach(function(el){
+          var txt = el.textContent || '';
+          var m = txt.match(/(\d+)/);
+          if (m) sum += parseInt(m[1], 10);
+        });
+        var min = document.querySelector('.minimum-coins');
+        if (min) {
+          var sym = '<span class="coin-symbol"> XNY</span>';
+          var suf = min.querySelector('.usd-suffix'); if (suf) suf.remove();
+          min.innerHTML = String(sum) + sym;
+        }
+      }
+      try { sumRewards(); } catch(e){}
+    })();
+  </script>
+  
+      <script>
+    (function(){
+      function buildLotteryValues(price){
+        var grid = document.querySelector('.lottery-grid');
+        if (!grid) return;
+        function fmt(n){ try { return (Math.round(n*10)/10).toFixed(1); } catch(_) { return String(n); } }
+        var items = grid.querySelectorAll('.lottery-column .lottery-item');
+        items.forEach(function(item){
+          var reward = item.querySelector('.lottery-reward');
+          if (!reward) return;
+          var m = (reward.textContent||'').replace(/,/g,'').match(/(\d+(?:\.\d+)?)\s*(?:XNY|枚|coins)/i);
+          if (!m) return;
+          var coins = parseFloat(m[1]);
+          if (!isFinite(coins)) return;
+          var usdLine = item.querySelector('.lottery-usdt');
+          if (!usdLine) { usdLine = document.createElement('div'); usdLine.className = 'lottery-usdt'; reward.insertAdjacentElement('afterend', usdLine); }
+          if (isFinite(price)) { usdLine.textContent = '≈ $ ' + fmt(coins*price) + ' USDT'; }
+        });
+      }
+      try { window.buildLotteryValues = buildLotteryValues; } catch(_) {}
+    })();
+  </script>
+  <!-- Price annotation: XNYUSDT -->
+  <script>
+    (function(){
+      const API = 'https://fapi.binance.com/fapi/v1/ticker/price?symbol=XNYUSDT';
+      function fmt(n){ const v = Number(n); return isFinite(v) ? v.toFixed(1) : ''; }
+      function lang(){ try { return localStorage.getItem('calendar_lang') || 'zh'; } catch(_){ return 'zh'; } }
+      function annotateSummary(price){
+        const el = document.querySelector('.minimum-coins');
+        if (!el || el.querySelector('.usd-suffix')) return;
+        const m = (el.textContent||'').replace(/,/g,'').match(/(\d+(?:\.\d+)?)/);
+        if (!m) return; const coins = parseFloat(m[1]); if (!isFinite(coins)) return;
+        const span = document.createElement('span');
+        span.className = 'usd-suffix';
+        span.style.fontSize = '0.7em'; span.style.marginLeft = '8px'; span.style.color = '#f0b90b';
+        span.textContent = (lang()==='en' ? ` ($ ${fmt(coins*price)} USDT)` : `≈$ ${fmt(coins*price)} USDT`);
+        el.appendChild(span);
+      }
+      function annotate(price){
+        if (!isFinite(price)) return;
+        const nodes = document.querySelectorAll('.task-reward, .lottery-reward');
+        nodes.forEach(el=>{
+          const txt = el.textContent || '';
+          if (/USDT/i.test(txt)) return;
+          const m = txt.replace(/,/g,'').match(/(\d+(?:\.\d+)?)\s*(?:枚|coins)/i);
+          if (!m) return; const coins = parseFloat(m[1]); if (!isFinite(coins)) return;
+          const suffix = (lang()==='en' ? ` ($ ${fmt(coins*price)} USDT)` : `≈$ ${fmt(coins*price)} USDT`);
+          el.textContent = txt + ' ' + suffix;
+        });
+        annotateSummary(price);
+      }
+      try {
+        fetch(API).then(r=>r.json()).then(d=>{ const p = parseFloat(d && (d.price||d.lastPrice)); annotate(p); try { buildLotteryValues(p); } catch(e) {} try { buildLotteryValues(p); } catch(e) {} }).catch(()=>{});
+      } catch(_) {}
+    })();
+  </script>
+</body>
+</html>
