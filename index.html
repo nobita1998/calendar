@@ -1275,44 +1275,19 @@ function generateNotes() {
             } catch (_) {}
         }
 
-        // Unified "down" endpoint and reliable ping
-        const DOWN_ENDPOINT = 'https://api.counterapi.dev/v2/nobita/x-nobita/down';
-        const CALENDAR_DOWN_ENDPOINT = 'https://api.counterapi.dev/v2/nobita/calendar/down';
+        // Unified "down" endpoint and reliable ping (disabled)
+        // NOTE: External count APIs are disabled per request.
+        // const DOWN_ENDPOINT = 'https://api.counterapi.dev/v2/nobita/x-nobita/down';
+        // const CALENDAR_DOWN_ENDPOINT = 'https://api.counterapi.dev/v2/nobita/calendar/down';
 
         function pingDown() {
-            try {
-                if (navigator.sendBeacon) {
-                    const blob = new Blob([], { type: 'text/plain' });
-                    navigator.sendBeacon(DOWN_ENDPOINT, blob);
-                    return true;
-                }
-            } catch (e) { /* no-op */ }
-            try {
-                fetch(DOWN_ENDPOINT, { method: 'GET', mode: 'no-cors', keepalive: true }).catch(() => {});
-            } catch (e) { /* no-op */ }
-            return true;
+          // disabled
+          return true;
         }
 
         function pingCalendarDown() {
-            try {
-                fetch(CALENDAR_DOWN_ENDPOINT, {
-                    method: 'GET',
-                    mode: 'no-cors',
-                    keepalive: true,
-                    headers: {
-                        'Authorization': 'Bearer ut_ng8ohFJIAYIsFOu2vFgHIhPvn6k51wjzHIxriZZx'
-                    }
-                }).catch(() => {});
-            } catch (e) {
-                // As a last resort, try beacon without headers
-                try {
-                    if (navigator.sendBeacon) {
-                        const blob = new Blob([], { type: 'text/plain' });
-                        navigator.sendBeacon(CALENDAR_DOWN_ENDPOINT, blob);
-                    }
-                } catch (_) { /* no-op */ }
-            }
-            return true;
+          // disabled
+          return true;
         }
 
         function openProfitLink(url, event) {
@@ -1343,7 +1318,7 @@ function generateNotes() {
         let lastClickTime = 0;
         
         // Track page views with session storage to prevent duplicates
-        function trackPageView() {
+function trackPageView() {
             const sessionKey = 'calendar_page_viewed';
             
             // Check if already tracked this session
@@ -1352,26 +1327,8 @@ function generateNotes() {
                 return;
             }
             
-            console.log('Tracking page view...');
-            
-            try {
-                // Track page views using calendar counter
-                fetch('https://api.counterapi.dev/v2/nobita/calendar/up', {
-                    method: 'GET',
-                    mode: 'no-cors',
-                    headers: {
-                        'Authorization': 'Bearer ut_ng8ohFJIAYIsFOu2vFgHIhPvn6k51wjzHIxriZZx'
-                    }
-                }).then(() => {
-                    console.log('Page view tracked successfully');
-                    // Mark as tracked in this session
-                    sessionStorage.setItem(sessionKey, 'true');
-                }).catch(error => {
-                    console.log('Page view tracking failed:', error);
-                });
-            } catch (error) {
-                console.log('Page view tracking error:', error);
-            }
+            console.log('Tracking disabled: external count API disabled');
+            try { sessionStorage.setItem(sessionKey, 'true'); } catch (_) {}
         }
         
         // Track author link clicks
@@ -1390,23 +1347,8 @@ function generateNotes() {
             
             lastClickTime = currentTime;
             
-            try {
-                console.log('Sending counter request...');
-                // Use fetch with no-cors mode (proven to work)
-                fetch('https://api.counterapi.dev/v2/nobita/x-nobita/down', {
-                    method: 'GET',
-                    mode: 'no-cors',
-                    headers: {
-                        'Authorization': 'Bearer ut_ng8ohFJIAYIsFOu2vFgHIhPvn6k51wjzHIxriZZx'
-                    }
-                }).then(() => {
-                    console.log('Counter request completed successfully');
-                }).catch(error => {
-                    console.log('Counter API call failed:', error);
-                });
-            } catch (error) {
-                console.log('Counter API error:', error);
-            }
+            // disabled: external count API
+            console.log('Counter request disabled');
             return true;
         }
         
@@ -1426,13 +1368,8 @@ function generateNotes() {
             
             lastClickTime = currentTime;
             
-            try {
-                console.log('Sending profit counter request...');
-                // Prefer beacon to avoid cancellation on navigation
-                pingDown();
-            } catch (error) {
-                console.log('Profit counter API error:', error);
-            }
+            // disabled: profit counter
+            console.log('Profit counter disabled');
             return true;
         }
 
@@ -1445,7 +1382,7 @@ function generateNotes() {
                 return true;
             }
             lastClickTime = currentTime;
-            try { pingCalendarDown(); } catch (_) {}
+            // disabled: calendar down counter
             return true;
         }
 
