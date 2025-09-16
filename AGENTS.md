@@ -34,9 +34,9 @@
 - Review any third‑party resources; pin versions and document the source.
 
 ## Analytics
-- Vercel Web Analytics is integrated via a lightweight script:
-  the app dynamically injects `/_vercel/insights/script.js` only on deployed domains
-  to avoid 404s during local development.
+- Vercel Web Analytics is integrated via a shared loader at `scripts/analytics.js`.
+- Each HTML page should include `<script src="scripts/analytics.js" defer></script>` before `</body>`.
+- The loader injects `/_vercel/insights/script.js` only on deployed domains (skips localhost) to avoid 404s in dev.
 
 ## Agent‑Specific Instructions
 - Make targeted edits; do not restructure unless necessary.

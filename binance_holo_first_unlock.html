@@ -322,5 +322,6 @@
       try { fetch(API).then(r=>r.json()).then(d=>{ const p = parseFloat(d && (d.price||d.lastPrice)); annotate(p); }).catch(()=>{}); } catch(_) {}
     })();
   </script>
+  <script src="scripts/analytics.js" defer></script>
 </body>
 </html>
