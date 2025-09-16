@@ -33,7 +33,11 @@
 - External calls in `index.html` hit a counter API. Do not commit secrets; prefer anonymous endpoints or a proxy.
 - Review any third‑party resources; pin versions and document the source.
 
+## Analytics
+- Vercel Web Analytics is integrated via a lightweight script:
+  the app dynamically injects `/_vercel/insights/script.js` only on deployed domains
+  to avoid 404s during local development.
+
 ## Agent‑Specific Instructions
 - Make targeted edits; do not restructure unless necessary.
 - If introducing `styles/`, `scripts/`, or `assets/`, update paths in `index.html` and this guide in the same change.
-
