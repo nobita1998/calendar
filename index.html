@@ -398,6 +398,25 @@
             line-height: 1.5;
         }
 
+        .disclaimer-section {
+            background: linear-gradient(135deg, #2a1f15 0%, #3a2a1a 100%);
+            padding: 16px 24px;
+            border-top: 1px solid rgba(240, 185, 11, 0.2);
+            border-radius: 0 0 24px 24px;
+        }
+
+        .disclaimer-text {
+            font-size: 13px;
+            color: #ffa726;
+            line-height: 1.4;
+            text-align: center;
+            background: rgba(255, 167, 38, 0.1);
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 167, 38, 0.3);
+            box-shadow: 0 2px 8px rgba(255, 167, 38, 0.15);
+        }
+
         .token-name {
             font-weight: bold;
             color: #0ecb81;
@@ -532,6 +551,15 @@
                 padding: 1px 4px;
                 margin-left: 6px;
             }
+
+            .disclaimer-section {
+                padding: 12px 16px;
+            }
+
+            .disclaimer-text {
+                font-size: 12px;
+                padding: 10px 12px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -625,6 +653,15 @@
                 padding: 1px 3px;
                 margin-left: 4px;
             }
+
+            .disclaimer-section {
+                padding: 10px 12px;
+            }
+
+            .disclaimer-text {
+                font-size: 11px;
+                padding: 8px 10px;
+            }
         }
     </style>
 </head>
@@ -662,6 +699,10 @@
 
         <div class="notes-section" id="notesSection">
         </div>
+        
+        <div class="disclaimer-section" id="disclaimerSection">
+            <div class="disclaimer-text"></div>
+        </div>
     </div>
 
     
@@ -681,7 +722,8 @@
                 binancePromoPrefix: 'Binance DEX 邀请码：',
                 binancePromoSuffix: '（省30%手续费）',
                 okxPromoPrefix: 'OKX DEX 邀请码：',
-                okxPromoSuffix: '（省20%手续费）'
+                okxPromoSuffix: '（省20%手续费）',
+                dateDisclaimer: '⚠️ 日期基于项目方的解锁日期计算得来，不同项目方的计算方法可能会有前后一天的出入。'
             },
             en: {
                 title: 'Binance Booster Unlock Calendar',
@@ -694,7 +736,8 @@
                 binancePromoPrefix: 'Binance DEX referral: ',
                 binancePromoSuffix: ' (Save 30% fees)',
                 okxPromoPrefix: 'OKX DEX referral: ',
-                okxPromoSuffix: ' (Save 20% fees)'
+                okxPromoSuffix: ' (Save 20% fees)',
+                dateDisclaimer: '⚠️ Dates are calculated based on project unlock schedules. Different projects may have variations of ±1 day in their calculation methods.'
             }
         };
 
@@ -774,6 +817,7 @@
                 enBtn.setAttribute('aria-pressed', String(!zhActive));
             }
             renderWeekdays();
+            updateDisclaimer();
         }
 
         // OKX promo displayed by default; no close button per requirements
@@ -909,25 +953,25 @@
                         },
                         {
                             "round": "第二次解锁",
-                            "daysFromTGE": 30,
+                            "daysFromTGE": 31,
                             "period": "Week3-4",
                             "profitLink": "binance_bas_second_unlock.html"
                         },
                         {
                             "round": "第三次解锁",
-                            "daysFromTGE": 60,
+                            "daysFromTGE": 61,
                             "period": "Week5-6",
                             "profitLink": null
                         },
                         {
                             "round": "第四次解锁",
-                            "daysFromTGE": 90,
+                            "daysFromTGE": 91,
                             "period": "Week7-9",
                             "profitLink": null
                         },
                         {
                             "round": "ç¬¬äº”æ¬¡è§£é”",
-                            "daysFromTGE": 120,
+                            "daysFromTGE": 121,
                             "period": "Week10-12",
                             "profitLink": null
                         }
@@ -1237,6 +1281,16 @@ function generateNotes() {
             try { document.querySelectorAll('.calendar-day.today').forEach(el => el.setAttribute('data-today-label', t('today'))); } catch (_) {}
             try { document.querySelectorAll('#notesSection a.profit-link').forEach(a => { a.textContent = t('profitLink'); }); } catch (_) {}
             localizeRoundsInDOM();
+            updateDisclaimer();
+        }
+
+        function updateDisclaimer() {
+            try {
+                const disclaimerText = document.querySelector('#disclaimerSection .disclaimer-text');
+                if (disclaimerText) {
+                    disclaimerText.textContent = t('dateDisclaimer');
+                }
+            } catch (_) {}
         }
 
         function localizeRoundsInDOM() {
