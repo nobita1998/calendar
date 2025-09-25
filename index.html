@@ -188,6 +188,20 @@
             .promo-banner { gap: 10px; padding: 10px 12px; }
         }
 
+        @media (max-width: 768px) {
+            .updates-section { padding: 12px 16px; }
+            .updates-title { font-size: 14px; }
+            .update-item { padding: 8px 12px; font-size: 12px; }
+            .update-date { font-size: 10px; }
+        }
+
+        @media (max-width: 480px) {
+            .updates-section { padding: 10px 12px; }
+            .updates-title { font-size: 13px; }
+            .update-item { padding: 6px 10px; font-size: 11px; }
+            .update-date { font-size: 9px; }
+        }
+
         .nav-button {
             background: linear-gradient(135deg, #0ecb81 0%, #1dd1a1 100%);
             border: none;
@@ -402,7 +416,6 @@
             background: linear-gradient(135deg, #2a1f15 0%, #3a2a1a 100%);
             padding: 16px 24px;
             border-top: 1px solid rgba(240, 185, 11, 0.2);
-            border-radius: 0 0 24px 24px;
         }
 
         .disclaimer-text {
@@ -415,6 +428,75 @@
             border-radius: 10px;
             border: 1px solid rgba(255, 167, 38, 0.3);
             box-shadow: 0 2px 8px rgba(255, 167, 38, 0.15);
+        }
+
+        .updates-section {
+            background: linear-gradient(135deg, #1a1d29 0%, #2b1b69 100%);
+            padding: 16px 24px;
+            border-top: 1px solid rgba(14, 203, 129, 0.2);
+            border-radius: 0 0 24px 24px;
+        }
+
+        .updates-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #0ecb81;
+            margin-bottom: 12px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .updates-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .update-item {
+            background: rgba(14, 203, 129, 0.1);
+            border: 1px solid rgba(14, 203, 129, 0.3);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #e6f4ea;
+            line-height: 1.4;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .update-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #0ecb81 0%, #1dd1a1 100%);
+        }
+
+        .update-date {
+            font-size: 11px;
+            color: #0ecb81;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .update-content {
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .update-new {
+            position: relative;
+            animation: newUpdatePulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes newUpdatePulse {
+            0% { box-shadow: 0 0 10px rgba(14, 203, 129, 0.3); }
+            100% { box-shadow: 0 0 20px rgba(14, 203, 129, 0.6); }
         }
 
         .token-name {
@@ -703,6 +785,21 @@
         <div class="disclaimer-section" id="disclaimerSection">
             <div class="disclaimer-text"></div>
         </div>
+
+        <div class="updates-section" id="updatesSection">
+            <div class="updates-title">
+                <span>🔔</span>
+                <span id="updatesTitle">最新更新</span>
+            </div>
+            <div class="updates-list" id="updatesList">
+                <div class="update-item update-new">
+                    <div class="update-content">BAS 第三次解锁收益测算已更新</div>
+                </div>
+                <div class="update-item">
+                    <div class="update-content">新增 RVV Token 解锁日历</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     
@@ -723,7 +820,8 @@
                 binancePromoSuffix: '（省30%手续费）',
                 okxPromoPrefix: 'OKX DEX 邀请码：',
                 okxPromoSuffix: '（省20%手续费）',
-                dateDisclaimer: '⚠️ 日期基于项目方的解锁日期计算得来，不同项目方的计算方法可能会有前后一天的出入。'
+                dateDisclaimer: '⚠️ 日期基于项目方的解锁日期计算得来，不同项目方的计算方法可能会有前后一天的出入。',
+                updatesTitle: '最新更新'
             },
             en: {
                 title: 'Binance Booster Unlock Calendar',
@@ -737,7 +835,8 @@
                 binancePromoSuffix: ' (Save 30% fees)',
                 okxPromoPrefix: 'OKX DEX referral: ',
                 okxPromoSuffix: ' (Save 20% fees)',
-                dateDisclaimer: '⚠️ Dates are calculated based on project unlock schedules. Different projects may have variations of ±1 day in their calculation methods.'
+                dateDisclaimer: '⚠️ Dates are calculated based on project unlock schedules. Different projects may have variations of ±1 day in their calculation methods.',
+                updatesTitle: 'Latest Updates'
             }
         };
 
@@ -818,6 +917,7 @@
             }
             renderWeekdays();
             updateDisclaimer();
+            updateUpdatesTitle();
         }
 
         // OKX promo displayed by default; no close button per requirements
@@ -961,7 +1061,7 @@
                             "round": "第三次解锁",
                             "daysFromTGE": 61,
                             "period": "Week5-6",
-                            "profitLink": null
+                            "profitLink": "binance_bas_third_unlock.html"
                         },
                         {
                             "round": "第四次解锁",
@@ -1302,6 +1402,15 @@ function generateNotes() {
                 const disclaimerText = document.querySelector('#disclaimerSection .disclaimer-text');
                 if (disclaimerText) {
                     disclaimerText.textContent = t('dateDisclaimer');
+                }
+            } catch (_) {}
+        }
+
+        function updateUpdatesTitle() {
+            try {
+                const updatesTitle = document.getElementById('updatesTitle');
+                if (updatesTitle) {
+                    updatesTitle.textContent = t('updatesTitle');
                 }
             } catch (_) {}
         }
