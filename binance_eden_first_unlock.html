@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eden 第一次解锁收益测算 - Binance Style</title>
+    <link rel="icon" type="image/png" sizes="1024x1024" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0c0c0f 0%, #1a1a23 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(23, 23, 31, 0.8);
+            border-radius: 16px;
+            border: 1px solid #2b2b40;
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(240, 185, 11, 0.1);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .title {
+            font-size: 2em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #f0b90b, #fcd535);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #848e9c;
+            font-size: 1.1em;
+        }
+
+        .lottery-card {
+            background: linear-gradient(135deg, rgba(240, 185, 11, 0.1) 0%, rgba(23, 23, 31, 0.9) 100%);
+            border: 1px solid #2b2b40;
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .lottery-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #f0b90b, #fcd535);
+        }
+
+        .lottery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .lottery-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .lottery-chance {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #f0b90b;
+        }
+
+        .lottery-reward {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #0ecb81;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .lottery-description {
+            color: #848e9c;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .fcfs-card {
+            background: linear-gradient(135deg, rgba(14, 203, 129, 0.1) 0%, rgba(23, 23, 31, 0.9) 100%);
+            border: 1px solid #2b2b40;
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .fcfs-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #0ecb81, #1dd1a1);
+        }
+
+        .fcfs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .fcfs-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .fcfs-quota {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #0ecb81;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, rgba(14, 203, 129, 0.15) 0%, rgba(240, 185, 11, 0.15) 100%);
+            border: 1px solid #2b2b40;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .summary-title {
+            font-size: 1.4em;
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .total-reward {
+            font-size: 2.2em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #0ecb81, #f0b90b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .calculation-details {
+            color: #848e9c;
+            font-size: 0.9em;
+            line-height: 1.6;
+            margin-top: 15px;
+        }
+
+        .back-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #0ecb81 0%, #1dd1a1 100%);
+            color: #000;
+            font-weight: 700;
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(14,203,129,.3);
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(14,203,129,.5);
+        }
+
+        .icon {
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { max-width: 100%; margin: 0; border-radius: 16px; padding: 20px; }
+            .header { margin-bottom: 20px; flex-direction: column; align-items: flex-start; gap: 8px; }
+            .title { font-size: 1.5em; }
+            .subtitle { font-size: 0.95em; }
+            .lottery-card, .fcfs-card { padding: 15px; border-radius: 10px; }
+            .lottery-title, .fcfs-title { font-size: 1.1em; }
+            .lottery-chance, .fcfs-quota { font-size: 1em; }
+            .lottery-reward { font-size: 1.2em; }
+            .summary-card { padding: 20px; }
+            .total-reward { font-size: 1.8em; }
+            .back-link { padding: 6px 10px; font-size: 14px; }
+        }
+
+        @media (max-width: 480px) {
+            .header { padding-top: 8px; }
+            .title { font-size: 1.25em; }
+            .lottery-title, .fcfs-title { font-size: 1em; }
+            .lottery-chance, .fcfs-quota { font-size: 0.9em; }
+            .lottery-reward { font-size: 1.1em; }
+            .back-link { font-size: 13px; padding: 6px 10px; }
+            .summary-title { font-size: 1.2em; }
+            .total-reward { font-size: 1.6em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-link" aria-label="返回日历" onclick="if (document.referrer && new URL(document.referrer).origin === location.origin) { history.back(); return false; }">← 返回日历</a>
+            <h1 class="title">Binance Booster 收益测算 - Eden 第一次解锁</h1>
+        </div>
+
+        <div class="lottery-card">
+            <div class="lottery-header">
+                <div class="lottery-title">
+                    <span class="icon">🎯</span>
+                    第一次抽奖
+                </div>
+                <div class="lottery-chance">中奖率: 90%+</div>
+            </div>
+            <div class="lottery-reward">奖励: 30 EDEN</div>
+        </div>
+
+        <div class="lottery-card">
+            <div class="lottery-header">
+                <div class="lottery-title">
+                    <span class="icon">🎲</span>
+                    第二次抽奖
+                </div>
+                <div class="lottery-chance">中奖率: 50%+</div>
+            </div>
+            <div class="lottery-reward">奖励: 130 EDEN</div>
+        </div>
+
+        <div class="fcfs-card">
+            <div class="fcfs-header">
+                <div class="fcfs-title">
+                    <span class="icon">⚡</span>
+                    先到先得活动
+                </div>
+                <div class="fcfs-quota">名额: 50,000 人</div>
+            </div>
+            <div class="lottery-reward">奖励: 10 EDEN</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-title">期望收益</div>
+            <div class="total-reward">102 EDEN</div>
+            <div class="calculation-details">
+                <strong>计算公式:</strong> 30×0.9 + 130×0.5 + 10×1 = 102 EDEN
+            </div>
+        </div>
+    </div>
+</body>
+</html>
