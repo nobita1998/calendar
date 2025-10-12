@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>任务完成进度 - Binance Style</title>
+    <link rel="icon" type="image/png" sizes="1024x1024" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0c0c0f 0%, #1a1a23 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(23, 23, 31, 0.8);
+            border-radius: 16px;
+            border: 1px solid #2b2b40;
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(240, 185, 11, 0.1);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .title {
+            font-size: 2em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #f0b90b, #fcd535);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, rgba(240, 185, 11, 0.1) 0%, rgba(23, 23, 31, 0.9) 100%);
+            border: 1px solid #2b2b40;
+            border-radius: 12px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #f0b90b, #fcd535);
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #f0b90b;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #2b2b40;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f0b90b, #fcd535);
+            border-radius: 4px;
+        }
+
+        .progress-caption {
+            text-align: right;
+            color: #848e9c;
+            font-size: 0.9em;
+            margin-bottom: 25px;
+        }
+        
+        .divider {
+            height: 1px;
+            background: #2b2b40;
+            margin-bottom: 25px;
+        }
+
+        .reward-details .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+        
+        .reward-details .detail-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .reward-details .label {
+            color: #848e9c;
+        }
+        
+        .reward-details .value {
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .reward-details .unlocked-reward .value {
+            color: #26a69a; /* Highlight color for unlocked reward */
+            font-size: 1.2em;
+        }
+        
+        .coin-symbol {
+            color: #f0b90b;
+            margin-left: 5px;
+        }
+
+        .disclaimer {
+            text-align: center;
+            color: #848e9c;
+            font-size: 0.9em;
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(23, 23, 31, 0.5);
+            border-radius: 8px;
+        }
+
+        .watermark {
+            text-align: right;
+            color: #848e9c;
+            font-size: 1em;
+            opacity: 0.8;
+            margin-top: 20px;
+            padding-right: 10px;
+        }
+
+        .back-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #0ecb81 0%, #1dd1a1 100%);
+            color: #000;
+            font-weight: 700;
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(14,203,129,.3);
+        }
+        .back-link:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(14,203,129,.5); }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-link" aria-label="返回日历">← 返回日历</a>
+            <h1 class="title">Binance Booster 收益测算 -- RVV 第一次解锁</h1>
+        </div>
+
+        <div class="info-card">
+            <div class="progress-header">
+                <span class="progress-title">总进度</span>
+                <span class="progress-percentage">98.05%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 98.05%;"></div>
+            </div>
+            <div class="progress-caption">93151 / 95000</div>
+            
+            <div class="divider"></div>
+
+            <div class="reward-details">
+                <div class="detail-row">
+                    <span class="label">预计总奖励</span>
+                    <span class="value">1019.85<span class="coin-symbol">🪙</span></span>
+                </div>
+                <div class="detail-row unlocked-reward">
+                    <span class="label">TGE 当天解锁 (50%)</span>
+                    <span class="value" id="actual-reward">509.92<span class="coin-symbol">🪙</span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            * 请注意：第一次解锁仅释放总奖励的 50%。本页预估的 USDT 价值基于 TGE 当天可解锁的数量计算。
+        </div>
+
+        <div class="watermark">
+            X: @NNNNNNOBITA
+        </div>
+    </div>
+    <script>
+      (function() {
+        // 假设代币符号为 RVV，API 端点为 RVVUSDT
+        const API = 'https://fapi.binance.com/fapi/v1/ticker/price?symbol=RVVUSDT';
+        
+        function formatUsd(n) {
+          const value = Number(n);
+          return isFinite(value) ? value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '';
+        }
+
+        function annotate(price) {
+          if (!isFinite(price) || price <= 0) return;
+
+          const rewardEl = document.getElementById('actual-reward');
+          if (rewardEl && !rewardEl.querySelector('.usd-value')) {
+            const coinText = rewardEl.textContent.match(/(\d+\.?\d*)/);
+            if (!coinText) return;
+            
+            const coins = parseFloat(coinText[1]);
+            if (!isFinite(coins)) return;
+
+            const usdValue = coins * price;
+            const span = document.createElement('span');
+            span.className = 'usd-value';
+            span.style.fontSize = '0.8em';
+            span.style.marginLeft = '10px';
+            span.style.color = '#848e9c';
+            span.textContent = `(≈ $${formatUsd(usdValue)} USDT)`;
+            rewardEl.appendChild(span);
+          }
+        }
+
+        // 获取价格并更新UI
+        try {
+          fetch(API)
+            .then(r => r.json())
+            .then(d => {
+              const price = parseFloat(d && (d.price || d.lastPrice));
+              annotate(price);
+            })
+            .catch(console.error);
+        } catch(e) {
+          console.error(e);
+        }
+      })();
+    </script>
+</body>
+</html>
