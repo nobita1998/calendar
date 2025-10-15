@@ -182,7 +182,7 @@
 
         .lottery-grid {
             display: grid;
-            grid-template-columns: 1fr; /* Changed to 1 column for better layout with 3 items */
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 20px;
         }
 
@@ -422,7 +422,7 @@
         </div>
 
         <div class="summary-card">
-            <div class="summary-title">理论最低收益</div>
+            <div class="summary-title">Summary by 𝕏@NNNNNNOBITA</div>
             <div class="minimum-coins">
                 2066<span class="coin-symbol">🪙</span>
             </div>
@@ -453,18 +453,14 @@
                 </div>
             </div>
         </div>
-
-        <div class="watermark">
-            X: @NNNNNNOBITA
-        </div>
     </div>
     <script>
       (function() {
         const LANG_STORAGE_KEY = 'calendar_lang';
         const currentLang = (function(){ try { return localStorage.getItem(LANG_STORAGE_KEY) || 'zh'; } catch(_){ return 'zh'; } })();
         const dict = {
-          zh: { back: '返回日历', summary: '汇总', lottery: '抽奖', roundFirst: '第一次解锁', roundSecond: '第二次解锁', roundThird: '第三次解锁', roundFourth: '第四次解锁', headPrefix: 'Binance Booster - ' },
-          en: { back: 'Back to Calendar', summary: 'Summary', lottery: 'Lottery', roundFirst: 'First Unlock', roundSecond: 'Second Unlock', roundThird: 'Third Unlock', roundFourth: 'Fourth Unlock', headPrefix: 'Binance Booster - ' }
+          zh: { back: '返回日历', summary: 'Summary by 𝕏@NNNNNNOBITA', lottery: '抽奖', roundFirst: '第一次解锁', roundSecond: '第二次解锁', roundThird: '第三次解锁', roundFourth: '第四次解锁', headPrefix: 'Binance Booster - ' },
+          en: { back: 'Back to Calendar', summary: 'Summary by 𝕏@NNNNNNOBITA', lottery: 'Lottery', roundFirst: 'First Unlock', roundSecond: 'Second Unlock', roundThird: 'Third Unlock', roundFourth: 'Fourth Unlock', headPrefix: 'Binance Booster - ' }
         };
         function getMetaFromPath(){
           const p = (location.pathname || '').toLowerCase();
