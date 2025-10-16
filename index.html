@@ -103,7 +103,8 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            max-width: 400px;
+            max-width: 600px;
+            gap: 12px;
         }
 
         .month-title {
@@ -221,6 +222,31 @@
         }
 
         .nav-button:active {
+            transform: translateY(0);
+        }
+
+        .export-button {
+            background: linear-gradient(135deg, #0a9f6e 0%, #0ecb81 100%);
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(10, 159, 110, 0.25);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .export-button:hover {
+            background: linear-gradient(135deg, #0ecb81 0%, #1dd1a1 100%);
+            box-shadow: 0 3px 10px rgba(14, 203, 129, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .export-button:active {
             transform: translateY(0);
         }
 
@@ -550,6 +576,12 @@
                 min-width: 80px;
             }
 
+            .export-button {
+                padding: 5px 12px;
+                font-size: 11px;
+                bottom: 6px;
+            }
+
             /* Language toggle: mobile-friendly tap targets */
             .lang-toggle { top: 8px; right: 8px; gap: 8px; }
             .lang-button { min-width: 44px; min-height: 36px; padding: 6px 10px; font-size: 12px; }
@@ -673,6 +705,12 @@
                 min-width: 70px;
             }
 
+            .export-button {
+                padding: 4px 10px;
+                font-size: 10px;
+                bottom: 4px;
+            }
+
             /* Language toggle: compact but accessible */
             .lang-toggle { top: 8px; right: 8px; gap: 6px; }
             .lang-button { min-width: 44px; min-height: 36px; padding: 6px 8px; font-size: 12px; }
@@ -756,6 +794,9 @@
                 <div class="second-row">
                     <div class="month-title" id="monthTitle"></div>
                     <a href="https://x.com/NNNNNNOBITA" target="_blank" class="author-link" onclick="trackClick(event)">Author: NNNNNNOBITA</a>
+                    <button class="export-button" id="exportBtn" onclick="exportToCalendar()" aria-label="Export calendar to .ics file">
+                        导出到日历
+                    </button>
                 </div>
             </div>
             <button class="nav-button" onclick="changeMonth(1)">下个月 →</button>
@@ -816,6 +857,7 @@
                 today: '今天',
                 author: '作者: NNNNNNOBITA',
                 profitLink: '收益计算',
+                exportCalendar: '导出到日历',
                 binancePromoPrefix: 'Binance DEX 邀请码：',
                 binancePromoSuffix: '（省30%手续费）',
                 okxPromoPrefix: 'OKX DEX 邀请码：',
@@ -831,6 +873,7 @@
                 today: 'Today',
                 author: 'Author: NNNNNNOBITA',
                 profitLink: 'Profit Calc',
+                exportCalendar: 'Export to Calendar',
                 binancePromoPrefix: 'Binance DEX referral: ',
                 binancePromoSuffix: ' (Save 30% fees)',
                 okxPromoPrefix: 'OKX DEX referral: ',
@@ -867,6 +910,8 @@
                 if (btns[0]) btns[0].textContent = t('prev');
                 if (btns[1]) btns[1].textContent = t('next');
             }
+            const exportBtn = document.getElementById('exportBtn');
+            if (exportBtn) exportBtn.textContent = t('exportCalendar');
             // Promo banner text with hyperlink code (Binance)
             const promoBn = document.getElementById('binancePromo');
             if (promoBn) {
@@ -1492,11 +1537,176 @@ function generateNotes() {
             return false; // prevent default when used on <a>
         }
 
+        // === .ics Calendar Export Functions ===
+
+        // Format date to iCalendar format: YYYYMMDDTHHMMSSZ
+        function formatICSDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}${month}${day}`;
+        }
+
+        // Format datetime to iCalendar format with timezone
+        function formatICSDateTime(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            return `${year}${month}${day}T${hours}${minutes}${seconds}`;
+        }
+
+        // Escape special characters in iCalendar text fields
+        function escapeICSText(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/\\/g, '\\\\')
+                .replace(/;/g, '\\;')
+                .replace(/,/g, '\\,')
+                .replace(/\n/g, '\\n');
+        }
+
+        // Generate .ics file content for all unlock events
+        function generateICS() {
+            const events = [];
+            const now = new Date();
+            const dtstamp = formatICSDateTime(now);
+
+            // Collect all unlock events from all tokens
+            unlockData.tokens.forEach(token => {
+                const tgeDate = new Date(token.tgeDate + 'T00:00:00');
+
+                token.unlockSchedule.forEach(unlock => {
+                    const unlockDate = new Date(tgeDate);
+                    unlockDate.setDate(unlockDate.getDate() + unlock.daysFromTGE);
+
+                    // Set time to 09:00 UTC+8 for all events
+                    unlockDate.setHours(9, 0, 0, 0);
+
+                    // Translate round label based on current language
+                    const roundLabel = translateRoundLabel(unlock.round);
+
+                    // Event summary
+                    const summary = `${token.symbol} ${roundLabel}`;
+
+                    // Event description
+                    let description = `Period: ${unlock.period}`;
+                    if (unlock.profitLink) {
+                        const fullUrl = `${window.location.origin}/${unlock.profitLink}`;
+                        description += `\\nProfit Calculator: ${fullUrl}`;
+                    }
+                    description += `\\n\\nBinance Booster Unlock Event`;
+                    description += `\\nToken: ${token.name}`;
+
+                    // Event URL
+                    const url = unlock.profitLink ?
+                        `${window.location.origin}/${unlock.profitLink}` :
+                        window.location.origin;
+
+                    // Create event object
+                    events.push({
+                        uid: `binance-booster-${token.symbol}-${unlock.daysFromTGE}@${window.location.hostname}`,
+                        dtstamp: dtstamp,
+                        dtstart: formatICSDateTime(unlockDate),
+                        summary: escapeICSText(summary),
+                        description: escapeICSText(description),
+                        location: 'Binance Wallet',
+                        url: url,
+                        // Add alarm: 1 day before at 09:00
+                        alarm: true
+                    });
+                });
+            });
+
+            // Sort events by date
+            events.sort((a, b) => a.dtstart.localeCompare(b.dtstart));
+
+            // Build .ics file content
+            let icsContent = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//Binance Booster Calendar//NONSGML v1.0//EN',
+                'CALSCALE:GREGORIAN',
+                'METHOD:PUBLISH',
+                'X-WR-CALNAME:Binance Booster Unlock Calendar',
+                'X-WR-TIMEZONE:Asia/Shanghai',
+                'X-WR-CALDESC:Binance Wallet Booster token unlock schedule'
+            ];
+
+            // Add timezone definition for Asia/Shanghai
+            icsContent.push(
+                'BEGIN:VTIMEZONE',
+                'TZID:Asia/Shanghai',
+                'BEGIN:STANDARD',
+                'DTSTART:19700101T000000',
+                'TZOFFSETFROM:+0800',
+                'TZOFFSETTO:+0800',
+                'TZNAME:CST',
+                'END:STANDARD',
+                'END:VTIMEZONE'
+            );
+
+            // Add each event
+            events.forEach(event => {
+                icsContent.push('BEGIN:VEVENT');
+                icsContent.push(`UID:${event.uid}`);
+                icsContent.push(`DTSTAMP:${event.dtstamp}`);
+                icsContent.push(`DTSTART;TZID=Asia/Shanghai:${event.dtstart}`);
+                icsContent.push(`SUMMARY:${event.summary}`);
+                icsContent.push(`DESCRIPTION:${event.description}`);
+                icsContent.push(`LOCATION:${escapeICSText(event.location)}`);
+                icsContent.push(`URL:${event.url}`);
+                icsContent.push('STATUS:CONFIRMED');
+                icsContent.push('TRANSP:OPAQUE');
+
+                // Add alarm (reminder) 1 day before at 09:00
+                if (event.alarm) {
+                    icsContent.push('BEGIN:VALARM');
+                    icsContent.push('TRIGGER:-P1D');
+                    icsContent.push('ACTION:DISPLAY');
+                    icsContent.push(`DESCRIPTION:Reminder: ${event.summary}`);
+                    icsContent.push('END:VALARM');
+                }
+
+                icsContent.push('END:VEVENT');
+            });
+
+            icsContent.push('END:VCALENDAR');
+
+            return icsContent.join('\r\n');
+        }
+
+        // Export calendar to .ics file
+        function exportToCalendar() {
+            try {
+                const icsContent = generateICS();
+                const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'binance-booster-unlock-calendar.ics';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Clean up the URL object
+                setTimeout(() => URL.revokeObjectURL(url), 100);
+
+                console.log('Calendar exported successfully');
+            } catch (error) {
+                console.error('Error exporting calendar:', error);
+                alert('Failed to export calendar. Please try again.');
+            }
+        }
+
         // Initialize calendar
         function init() {
             applyStaticTexts();
             updateCalendar();
-            
+
             // Track page view after a short delay to ensure page is fully loaded
             setTimeout(() => {
                 trackPageView();
