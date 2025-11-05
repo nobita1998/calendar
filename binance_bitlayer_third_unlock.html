@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>任务完成进度 - Binance Style</title>
+    <link rel="icon" type="image/png" sizes="1024x1024" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0c0c0f 0%, #1a1a23 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(23, 23, 31, 0.8);
+            border-radius: 16px;
+            border: 1px solid #2b2b40;
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(240, 185, 11, 0.1);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .title {
+            font-size: 2em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #f0b90b, #fcd535);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #848e9c;
+            font-size: 1.1em;
+        }
+
+        .part-section {
+            margin-bottom: 30px;
+        }
+
+        .part-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #f0b90b;
+            margin-bottom: 15px;
+            text-align: center;
+            padding: 10px;
+            background: linear-gradient(135deg, rgba(240, 185, 11, 0.1) 0%, rgba(23, 23, 31, 0.9) 100%);
+            border-radius: 8px;
+            border: 1px solid rgba(240, 185, 11, 0.3);
+        }
+
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .task-card {
+            background: linear-gradient(135deg, rgba(240, 185, 11, 0.1) 0%, rgba(23, 23, 31, 0.9) 100%);
+            border: 1px solid #2b2b40;
+            border-radius: 12px;
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .task-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #f0b90b, #fcd535);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .task-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .task-percentage {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #f0b90b;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #2b2b40;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f0b90b, #fcd535);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .task-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-reward {
+            font-size: 1em;
+            color: #26a69a;
+            font-weight: 600;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, rgba(240, 185, 11, 0.2) 0%, rgba(23, 23, 31, 0.9) 100%);
+            border: 2px solid #f0b90b;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .summary-title {
+            font-size: 1.1em;
+            color: #f0b90b;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .minimum-coins {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(240, 185, 11, 0.8);
+        }
+
+        .coin-symbol {
+            color: #f0b90b;
+            margin-left: 10px;
+        }
+
+        .watermark {
+            text-align: right;
+            color: #848e9c;
+            font-size: 1em;
+            opacity: 0.8;
+            margin-top: 20px;
+            padding-right: 10px;
+        }
+
+        .lottery-section {
+            background: linear-gradient(135deg, rgba(38, 166, 154, 0.1) 0%, rgba(23, 23, 31, 0.9) 100%);
+            border: 1px solid #2b2b40;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .lottery-title {
+            font-size: 1.6em;
+            color: #26a69a;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .lottery-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .lottery-item {
+            background: rgba(38, 166, 154, 0.1);
+            border: 1px solid rgba(38, 166, 154, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .lottery-emoji {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .lottery-rate {
+            color: #26a69a;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .lottery-reward {
+            color: #f0b90b;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .special-section {
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.1) 0%, rgba(23, 23, 31, 0.9) 100%);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .special-title {
+            font-size: 1.4em;
+            color: #8a2be2;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .special-item {
+            background: rgba(138, 43, 226, 0.1);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { max-width: 100%; margin: 0; border-radius: 16px; padding: 20px; }
+            .header { margin-bottom: 20px; }
+            .title { font-size: 1.5em; }
+            .subtitle { font-size: 0.95em; }
+            .tasks-grid { grid-template-columns: 1fr; gap: 12px; }
+            .task-card { padding: 12px; border-radius: 10px; }
+            .task-title { font-size: 1em; }
+            .task-percentage { font-size: 1.2em; }
+            .progress-bar { height: 6px; }
+            .summary-card { padding: 12px; }
+            .lottery-section { padding: 16px; border-radius: 10px; }
+            .lottery-grid { grid-template-columns: 1fr; gap: 12px; }
+            .lottery-grid[style*="1fr 1fr 1fr 1fr"] { grid-template-columns: 1fr 1fr !important; }
+            div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
+            .lottery-title { font-size: 1.3em; }
+            .lottery-item { padding: 16px; }
+            .back-link { padding: 6px 10px; font-size: 14px; }
+        }
+
+        /* 返回按钮样式（与日历风格一致） */
+        .back-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #0ecb81 0%, #1dd1a1 100%);
+            color: #000;
+            font-weight: 700;
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(14,203,129,.3);
+        }
+        @media (max-width: 480px) {
+            .header { padding-top: 8px; }
+            .title { font-size: 1.25em; }
+            .task-title { font-size: 0.95em; }
+            .task-percentage { font-size: 1.1em; }
+            .progress-bar { height: 5px; }
+            .back-link { font-size: 13px; padding: 6px 10px; }
+            .summary-title { font-size: 1em; }
+            .minimum-coins { font-size: 1.5em; }
+        }
+        .back-link:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(14,203,129,.5); }
+        .back-fixed { position: fixed; top: 16px; left: 16px; z-index: 1000; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-link" aria-label="返回日历" onclick="if (document.referrer && new URL(document.referrer).origin === location.origin) { history.back(); return false; }">← 返回日历</a>
+            <h1 class="title">Binance Booster 收益测算 -- BitLayer 第三期</h1>
+        </div>
+
+        <!-- Part 1 -->
+        <div class="part-section">
+            <div class="part-title">Part 1 - 常规任务</div>
+            <div class="tasks-grid">
+                <div class="task-card">
+                    <div class="task-header">
+                        <span class="task-title">第三周-任务1</span>
+                        <span class="task-percentage">80%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 80%;"></div>
+                    </div>
+                    <div class="task-footer">
+                        <span></span>
+                        <div class="task-reward">人均奖励: 50 币</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Part 2 -->
+        <div class="part-section">
+            <div class="part-title">Part 2 - 抽奖任务</div>
+            <div class="lottery-section">
+                <div class="lottery-grid" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
+                    <div class="lottery-item">
+                        <div class="lottery-emoji">🎰</div>
+                        <div style="font-weight: 600; margin-bottom: 10px;">0.005 YBTC.B</div>
+                        <div class="lottery-rate">20000人中奖</div>
+                        <div class="lottery-reward">每人: 60 币</div>
+                    </div>
+                    <div class="lottery-item">
+                        <div class="lottery-emoji">🎲</div>
+                        <div style="font-weight: 600; margin-bottom: 10px;">0.05 YBTC.B</div>
+                        <div class="lottery-rate">2000人中奖</div>
+                        <div class="lottery-reward">每人: 525 币</div>
+                    </div>
+                    <div class="lottery-item">
+                        <div class="lottery-emoji">📋</div>
+                        <div style="font-weight: 600; margin-bottom: 10px;">0.5 YBTC.B</div>
+                        <div class="lottery-rate">300人中奖</div>
+                        <div class="lottery-reward">每人: 1000 币</div>
+                    </div>
+                    <div class="lottery-item">
+                        <div class="lottery-emoji">📊</div>
+                        <div style="font-weight: 600; margin-bottom: 10px;">1 YBTC.B</div>
+                        <div class="lottery-rate">150人中奖</div>
+                        <div class="lottery-reward">每人: 4000 币</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Part 3 -->
+        <div class="part-section">
+            <div class="part-title">Part 3 - Helmet NFT</div>
+            <div class="special-section">
+                <div class="special-title">🏆 Helmet NFT 奖励</div>
+                <div class="special-item">
+                    <div style="font-size: 1.5em; margin-bottom: 10px;">🎩</div>
+                    <div style="font-weight: 600; margin-bottom: 10px;">NFT 持有者专属</div>
+                    <div style="color: #8a2be2; font-weight: 600; margin-bottom: 5px;">参与率: 100%</div>
+                    <div style="color: #f0b90b; font-size: 1.2em; font-weight: 600;">每人: 2000 币</div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="watermark">
+            X: @NNNNNNOBITA
+        </div>
+    </div>
+    <script>
+      (function() {
+        const LANG_STORAGE_KEY = 'calendar_lang';
+        const currentLang = (function(){ try { return localStorage.getItem(LANG_STORAGE_KEY) || 'zh'; } catch(_){ return 'zh'; } })();
+        const dict = {
+          zh: { back: '返回日历', summary: '汇总', lottery: '抽奖', roundFirst: '第一次解锁', roundSecond: '第二次解锁', roundThird: '第三次解锁', headPrefix: 'Binance Booster - ' },
+          en: { back: 'Back to Calendar', summary: 'Summary', lottery: 'Lottery', roundFirst: 'First Unlock', roundSecond: 'Second Unlock', roundThird: 'Third Unlock', headPrefix: 'Binance Booster - ' }
+        };
+        function getMetaFromPath(){
+          const p = (location.pathname || '').toLowerCase();
+          let token = 'BitLayer';
+          if (p.includes('bas')) token = 'BAS';
+          if (p.includes('hemi')) token = 'HEMI';
+          if (p.includes('holo')) token = 'HOLO';
+          const isThird = /third/.test(p);
+          const isSecond = /second/.test(p);
+          let roundKey = 'roundFirst';
+          if (isThird) roundKey = 'roundThird';
+          else if (isSecond) roundKey = 'roundSecond';
+          return { token, roundKey };
+        }
+        function applyI18n(){
+          try { document.documentElement.setAttribute('lang', currentLang === 'zh' ? 'zh-CN' : 'en-US'); } catch(_){ }
+          const meta = getMetaFromPath();
+          const t = dict[currentLang];
+          const titleStr = `${t.headPrefix}${meta.token} ${t[meta.roundKey]}`;
+          const h1 = document.querySelector('h1.title');
+          if (h1) h1.textContent = titleStr;
+          try { document.title = titleStr; } catch(_){ }
+          const back = document.querySelector('.back-link');
+          if (back) { back.textContent = t.back; back.setAttribute('aria-label', t.back); }
+          const sumTitle = document.querySelector('.summary-title');
+          if (sumTitle) sumTitle.textContent = t.summary;
+          const lotTitle = document.querySelector('.lottery-title');
+          if (lotTitle) lotTitle.textContent = t.lottery;
+        }
+
+        // Map Chinese numerals (up to 99) to integers
+        function cnNumToInt(s) {
+          if (!s) return NaN;
+          const map = { '一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9 };
+          if (!s.includes('十')) return map[s] || NaN;
+          const [left,right] = s.split('十');
+          const tens = left === '' ? 1 : (map[left]||0);
+          const units = right === '' ? 0 : (map[right]||0);
+          return tens*10+units;
+        }
+
+        function toNumberToken(token){
+          if (/^\d+$/.test(token)) return token;
+          const n = cnNumToInt(token);
+          return isNaN(n) ? token : String(n);
+        }
+
+        // Translate detail texts: 第X周 / 任务X / 抽奖任务 → Week X / Task X / Lottery Tasks
+        function translateDetailText(str){
+          if (currentLang !== 'en') return str;
+          let out = String(str||'');
+          try {
+            out = out.replace(/抽奖任务/g, 'Lottery Tasks');
+            out = out.replace(/抽奖/g, 'Lottery');
+            out = out.replace(/概率|几率/g, 'Probability');
+            out = out.replace(/奖励/g, 'Reward');
+            out = out.replace(/汇总|合计|总计|共计|总共/g, 'Total');
+            out = out.replace(/剩余|还需/g, 'Remaining');
+            out = out.replace(/至少|最少/g, 'at least');
+            out = out.replace(/最低/g, 'minimum');
+            out = out.replace(/最多|最高/g, 'up to');
+            out = out.replace(/第\s*(\d+)\s*[\-~—–]\s*(\d+)\s*周/g, (m,a,b)=>`Weeks ${a}–${b}`);
+            out = out.replace(/第\s*([一二三四五六七八九十]+)\s*[\-~—–]\s*([一二三四五六七八九十]+)\s*周/g, (m,a,b)=>`Weeks ${toNumberToken(a)}–${toNumberToken(b)}`);
+            out = out.replace(/第\s*(\d+)\s*周/g, (m,n)=>`Week ${n}`);
+            out = out.replace(/第\s*([一二三四五六七八九十]+)\s*周/g, (m,cn)=>`Week ${toNumberToken(cn)}`);
+            out = out.replace(/任务\s*(\d+)/g, (m,n)=>`Task ${n}`);
+            out = out.replace(/任务\s*([一二三四五六七八九十]+)/g, (m,cn)=>`Task ${toNumberToken(cn)}`);
+            // Common standalone words
+            out = out.replace(/任务/g, 'Task');
+            out = out.replace(/周/g, 'Week');
+            out = out.replace(/第\s*(\d+)\s*天/g, (m,n)=>`Day ${n}`);
+            out = out.replace(/第\s*([一二三四五六七八九十]+)\s*天/g, (m,cn)=>`Day ${toNumberToken(cn)}`);
+            // Phases and batches
+            out = out.replace(/第\s*(\d+)\s*(阶段|期)/g, (m,n)=>`Phase ${n}`);
+            out = out.replace(/第\s*([一二三四五六七八九十]+)\s*(阶段|期)/g, (m,cn)=>`Phase ${toNumberToken(cn)}`);
+            out = out.replace(/第\s*(\d+)\s*批/g, (m,n)=>`Batch ${n}`);
+            out = out.replace(/第\s*([一二三四五六七八九十]+)\s*批/g, (m,cn)=>`Batch ${toNumberToken(cn)}`);
+            // Win rate: 中奖率: 约50% | 20000人中奖
+            function fmtEN(num){ try { return Number(num).toLocaleString('en-US'); } catch(_){ return num; } }
+            out = out.replace(/中奖率\s*[:：]\s*/g, 'Win rate: ');
+            out = out.replace(/约\s*(\d+)\s*%/g, (m,n)=>`~${n}%`);
+            out = out.replace(/(\d{1,9})\s*人中奖/g, (m,n)=>`${fmtEN(n)} winners`);
+            // Per person and coins: 每人: 150 币 / 每人150币 / 150 币
+            out = out.replace(/每人\s*(\d{1,9})\s*币/g, (m,n)=>`Per person ${fmtEN(n)} coins`);
+            out = out.replace(/每人\s*[:：]\s*/g, 'Per person: ');
+            out = out.replace(/(\d{1,9})\s*币/g, (m,n)=>`${fmtEN(n)} coins`);
+            // Renjun (per person) variants
+            out = out.replace(/人均\s*(\d{1,9})\s*币/g, (m,n)=>`Per person ${fmtEN(n)} coins`);
+            out = out.replace(/人均\s*[:：]\s*/g, 'Per person: ');
+            out = out.replace(/人均/g, 'Per person');
+            // Today/Yesterday/Tomorrow
+            out = out.replace(/今天|今日/g, 'Today');
+            out = out.replace(/昨天/g, 'Yesterday');
+            out = out.replace(/明天/g, 'Tomorrow');
+            // Part translations
+            out = out.replace(/常规任务/g, 'Regular Tasks');
+            out = out.replace(/混合任务/g, 'Mixed Tasks');
+            out = out.replace(/专属/g, 'Exclusive');
+            out = out.replace(/持有者/g, 'Holder');
+            out = out.replace(/参与率/g, 'Participation Rate');
+          } catch(_){}
+          // Extra mappings: slots / rank range / AVA top-N extra reward / 枚/人
+          try {
+            function fmtEN(num){ try { return Number(num).toLocaleString('en-US'); } catch(_){ return num; } }
+            // keep toNumberToken defined above (supports Chinese numerals)
+            out = out.replace(/名额/g, 'Slots');
+            out = out.replace(/AVA\s*排名前\s*(\d+)\s*额外\s*Reward/gi, (m,n)=>`Extra reward for AVA top ${fmtEN(n)}`);
+            out = out.replace(/第\s*(\d+)\s*[\-~—–]\s*(\d+)\s*名/g, (m,a,b)=>`Rank ${fmtEN(a)}–${fmtEN(b)}`);
+            out = out.replace(/第\s*(\d+)\s*名/g, (m,a)=>`Rank ${fmtEN(a)}`);
+            out = out.replace(/第\s*([一二三四五六七八九十]+)\s*[\-~—–]\s*([一二三四五六七八九十]+)\s*名/g, (m,a,b)=>`Rank ${a}–${b}`);
+            out = out.replace(/第\s*([一二三四五六七八九十]+)\s*名/g, (m,a)=>`Rank ${a}`);
+            out = out.replace(/(\d{1,9})\s*枚\s*\/\s*人/g, (m,n)=>`${fmtEN(n)} coins per person`);
+            out = out.replace(/\b枚\s*\/\s*人\b/g, 'coins per person');
+            out = out.replace(/(\d{1,9})\s*枚\b/g, (m,n)=>`${fmtEN(n)} coins`);
+          } catch(_){}
+          // Spacing fix-ups (e.g., "Per personReward" -> "Per person Reward")
+          try {
+            out = out.replace(/(Per person)(?=[A-Za-z])/g, '$1 ');
+            out = out.replace(/(Per person:)\s*(?=[A-Za-z])/g, '$1 ');
+          } catch(_){}
+          return out;
+        }
+
+        function applyDetailTranslations(){
+          if (currentLang !== 'en') return;
+          // Translate across the whole container
+          const root = document.querySelector('.container') || document.body;
+          if (!root) return;
+          const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+          const updates = [];
+          while (walker.nextNode()) {
+            const node = walker.currentNode;
+            const newVal = translateDetailText(node.nodeValue);
+            if (newVal !== node.nodeValue) updates.push([node,newVal]);
+          }
+          updates.forEach(([n,v])=>{ n.nodeValue = v; });
+        }
+
+        applyI18n();
+        applyDetailTranslations();
+      })();
+    </script>
+    <script>
+      // Fetch BTRUSDT latest futures price and annotate rewards in USDT
+      (function(){
+        const API = 'https://fapi.binance.com/fapi/v1/ticker/price?symbol=BTRUSDT';
+        function fmt(n){ const v = Number(n); return isFinite(v) ? v.toFixed(1) : ''; }
+        function lang(){ try { return localStorage.getItem('calendar_lang') || 'zh'; } catch(_){ return 'zh'; } }
+        function annotate(price){
+          if (!isFinite(price)) return;
+          const nodes = document.querySelectorAll('.task-reward, .lottery-reward');
+          nodes.forEach(el=>{
+            const txt = el.textContent || '';
+            if (/USDT/i.test(txt)) return;
+            const m = txt.replace(/,/g,'').match(/(\d+(?:\.\d+)?)\s*(?:币|枚|coins)/i);
+            if (!m) return; const coins = parseFloat(m[1]); if (!isFinite(coins)) return;
+            const suffix = (lang()==='en' ? ` ($ ${fmt(coins*price)} USDT)` : `（$ ${fmt(coins*price)} USDT）`);
+            el.textContent = txt + ' ' + suffix;
+          });
+        }
+        try {
+          fetch(API).then(r=>r.json()).then(d=>{ const p = parseFloat(d && (d.price||d.lastPrice)); annotate(p); }).catch(()=>{});
+        } catch(_) {}
+      })();
+    </script>
+    <script src="scripts/analytics.js" defer></script>
+  </body>
+</html>
