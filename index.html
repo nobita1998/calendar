@@ -189,6 +189,124 @@
             .promo-banner { gap: 10px; padding: 10px 12px; }
         }
 
+        /* Buy me a coffee section */
+        .coffee-section {
+            background: linear-gradient(135deg, #1a1d29 0%, #2d1b69 100%);
+            padding: 24px;
+            border-top: 1px solid rgba(240, 185, 11, 0.2);
+        }
+
+        .coffee-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #f0b90b;
+            margin-bottom: 16px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .coffee-description {
+            font-size: 14px;
+            color: #e6f4ea;
+            text-align: center;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .address-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .address-item {
+            background: linear-gradient(145deg, #1e2329 0%, #2b3139 100%);
+            border: 1px solid rgba(240, 185, 11, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .address-item:hover {
+            border-color: rgba(240, 185, 11, 0.6);
+            box-shadow: 0 4px 16px rgba(240, 185, 11, 0.2);
+        }
+
+        .address-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: #f0b90b;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .address-text {
+            font-size: 13px;
+            color: #ffffff;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .copy-button {
+            background: linear-gradient(135deg, #f0b90b 0%, #f8d12f 100%);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: #000;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(240, 185, 11, 0.3);
+            width: 100%;
+        }
+
+        .copy-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(240, 185, 11, 0.5);
+        }
+
+        .copy-button:active {
+            transform: translateY(0);
+        }
+
+        .copy-button.copied {
+            background: linear-gradient(135deg, #0ecb81 0%, #1dd1a1 100%);
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .coffee-section { padding: 16px 20px; }
+            .coffee-title { font-size: 16px; }
+            .coffee-description { font-size: 13px; margin-bottom: 16px; }
+            .address-item { padding: 14px; }
+            .address-label { font-size: 13px; }
+            .address-text { font-size: 12px; padding: 8px 10px; }
+            .copy-button { padding: 7px 14px; font-size: 12px; }
+        }
+
+        @media (max-width: 480px) {
+            .coffee-section { padding: 12px 16px; }
+            .coffee-title { font-size: 15px; }
+            .coffee-description { font-size: 12px; margin-bottom: 14px; }
+            .address-item { padding: 12px; }
+            .address-label { font-size: 12px; }
+            .address-text { font-size: 11px; padding: 8px; }
+            .copy-button { padding: 6px 12px; font-size: 11px; }
+        }
+
         @media (max-width: 768px) {
             .updates-section { padding: 12px 16px; }
             .updates-title { font-size: 14px; }
@@ -854,6 +972,39 @@
                 </div>
             </div>
         </div>
+
+        <div class="coffee-section" id="coffeeSection">
+            <div class="coffee-title">
+                <span>☕</span>
+                <span id="coffeeTitle">Buy Me a Coffee</span>
+            </div>
+            <div class="coffee-description" id="coffeeDescription">
+                如果这个日历对你有帮助，欢迎通过加密货币打赏支持！<br>
+                If this calendar helps you, feel free to support via crypto donations!
+            </div>
+            <div class="address-container">
+                <div class="address-item">
+                    <div class="address-label">
+                        <span>🔷</span>
+                        <span>EVM Address (ETH/BSC/Polygon/etc.)</span>
+                    </div>
+                    <div class="address-text" id="evmAddress">0xc4650309ba297c4febd233d9e61db86ad8387d2b</div>
+                    <button class="copy-button" onclick="copyAddress('evm')" id="evmCopyBtn">
+                        📋 Copy EVM Address
+                    </button>
+                </div>
+                <div class="address-item">
+                    <div class="address-label">
+                        <span>🟣</span>
+                        <span>Solana Address</span>
+                    </div>
+                    <div class="address-text" id="solAddress">56UKTkWqsEZszy4sTc34KwyfqKLov7x6JPx5GvdKqq4r</div>
+                    <button class="copy-button" onclick="copyAddress('sol')" id="solCopyBtn">
+                        📋 Copy Solana Address
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     
@@ -876,7 +1027,15 @@
                 okxPromoPrefix: 'OKX DEX 邀请码：',
                 okxPromoSuffix: '（省20%手续费）',
                 dateDisclaimer: '⚠️ 日期基于项目方的解锁日期计算得来，不同项目方的计算方法可能会有前后一天的出入。',
-                updatesTitle: '最新更新'
+                updatesTitle: '最新更新',
+                coffeeTitle: '请我喝咖啡',
+                coffeeDescription: '如果这个日历对你有帮助，欢迎通过加密货币打赏支持！',
+                evmLabel: 'EVM 地址 (ETH/BSC/Polygon等)',
+                solLabel: 'Solana 地址',
+                copyEvmBtn: '📋 复制 EVM 地址',
+                copySolBtn: '📋 复制 Solana 地址',
+                copied: '✅ 已复制！',
+                copyFailed: '复制失败，请手动复制'
             },
             en: {
                 title: 'Binance Booster Unlock Calendar',
@@ -892,7 +1051,15 @@
                 okxPromoPrefix: 'OKX DEX referral: ',
                 okxPromoSuffix: ' (Save 20% fees)',
                 dateDisclaimer: '⚠️ Dates are calculated based on project unlock schedules. Different projects may have variations of ±1 day in their calculation methods.',
-                updatesTitle: 'Latest Updates'
+                updatesTitle: 'Latest Updates',
+                coffeeTitle: 'Buy Me a Coffee',
+                coffeeDescription: 'If this calendar helps you, feel free to support via crypto donations!',
+                evmLabel: 'EVM Address (ETH/BSC/Polygon/etc.)',
+                solLabel: 'Solana Address',
+                copyEvmBtn: '📋 Copy EVM Address',
+                copySolBtn: '📋 Copy Solana Address',
+                copied: '✅ Copied!',
+                copyFailed: 'Copy failed, please copy manually'
             }
         };
 
@@ -976,6 +1143,7 @@
             renderWeekdays();
             updateDisclaimer();
             updateUpdatesTitle();
+            updateCoffeeSection();
         }
 
         // OKX promo displayed by default; no close button per requirements
@@ -1521,6 +1689,87 @@ function generateNotes() {
                     updatesTitle.textContent = t('updatesTitle');
                 }
             } catch (_) {}
+        }
+
+        function updateCoffeeSection() {
+            try {
+                const coffeeTitle = document.getElementById('coffeeTitle');
+                const coffeeDescription = document.getElementById('coffeeDescription');
+                const evmCopyBtn = document.getElementById('evmCopyBtn');
+                const solCopyBtn = document.getElementById('solCopyBtn');
+
+                if (coffeeTitle) coffeeTitle.textContent = t('coffeeTitle');
+                if (coffeeDescription) coffeeDescription.textContent = t('coffeeDescription');
+                if (evmCopyBtn) evmCopyBtn.textContent = t('copyEvmBtn');
+                if (solCopyBtn) solCopyBtn.textContent = t('copySolBtn');
+
+                // Update labels
+                const labels = document.querySelectorAll('.address-label span:last-child');
+                if (labels[0]) labels[0].textContent = t('evmLabel');
+                if (labels[1]) labels[1].textContent = t('solLabel');
+            } catch (_) {}
+        }
+
+        // Copy address to clipboard
+        function copyAddress(type) {
+            const addressId = type === 'evm' ? 'evmAddress' : 'solAddress';
+            const btnId = type === 'evm' ? 'evmCopyBtn' : 'solCopyBtn';
+            const addressElement = document.getElementById(addressId);
+            const btnElement = document.getElementById(btnId);
+
+            if (!addressElement || !btnElement) return;
+
+            const address = addressElement.textContent;
+            const originalBtnText = btnElement.textContent;
+
+            // Try to copy to clipboard
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(address)
+                    .then(() => {
+                        // Success - show feedback
+                        btnElement.textContent = t('copied');
+                        btnElement.classList.add('copied');
+
+                        // Reset after 2 seconds
+                        setTimeout(() => {
+                            btnElement.textContent = originalBtnText;
+                            btnElement.classList.remove('copied');
+                        }, 2000);
+                    })
+                    .catch(err => {
+                        console.error('Copy failed:', err);
+                        alert(t('copyFailed') + '\n\n' + address);
+                    });
+            } else {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = address;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+
+                try {
+                    const successful = document.execCommand('copy');
+                    if (successful) {
+                        btnElement.textContent = t('copied');
+                        btnElement.classList.add('copied');
+                        setTimeout(() => {
+                            btnElement.textContent = originalBtnText;
+                            btnElement.classList.remove('copied');
+                        }, 2000);
+                    } else {
+                        alert(t('copyFailed') + '\n\n' + address);
+                    }
+                } catch (err) {
+                    console.error('Fallback copy failed:', err);
+                    alert(t('copyFailed') + '\n\n' + address);
+                }
+
+                document.body.removeChild(textArea);
+            }
         }
 
         function localizeRoundsInDOM() {
