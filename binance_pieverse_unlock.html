@@ -272,10 +272,9 @@
     <div class="subtitle">每月解锁 1/6 · 共6轮解锁</div>
 
     <div class="info-banner">
-      <div class="info-banner-title">📌 解锁规则说明</div>
+      <div class="info-banner-title">解锁规则说明</div>
       <div class="info-banner-text">
-        Pieverse 代币采用 <strong>6个月线性解锁</strong>机制，每月解锁总奖励的 1/6。<br>
-        下方显示的是 <strong>每月解锁数量</strong>，将你各 Phase 的每月解锁数相加即可得到当月总解锁量。
+        Pieverse 代币采用 <strong>6个月线性解锁</strong>机制，每月解锁总奖励的 1/6。
       </div>
     </div>
 
@@ -288,7 +287,7 @@
             <span class="phase-title">Phase 1</span>
             <span class="phase-info">(8个任务 + 抽奖)</span>
           </div>
-          <div class="phase-total">42.5 Pieverse</div>
+          <div class="phase-total">30.62 Pieverse</div>
         </div>
         <div class="phase-content expanded">
           <div class="phase-tasks-grid">
@@ -344,7 +343,7 @@
             <span class="phase-title">Phase 2</span>
             <span class="phase-info">(5个任务 + 抽奖)</span>
           </div>
-          <div class="phase-total">31.2 Pieverse</div>
+          <div class="phase-total">18.69 Pieverse</div>
         </div>
         <div class="phase-content">
           <div class="phase-tasks-grid">
@@ -385,7 +384,7 @@
             <span class="phase-title">Phase 3</span>
             <span class="phase-info">(5个任务 + 抽奖)</span>
           </div>
-          <div class="phase-total">26.6 Pieverse</div>
+          <div class="phase-total">14.69 Pieverse</div>
         </div>
         <div class="phase-content">
           <div class="phase-tasks-grid">
@@ -426,7 +425,7 @@
             <span class="phase-title">Phase 4</span>
             <span class="phase-info">(5个任务 + 抽奖)</span>
           </div>
-          <div class="phase-total">26.6 Pieverse</div>
+          <div class="phase-total">14.69 Pieverse</div>
         </div>
         <div class="phase-content">
           <div class="phase-tasks-grid">
@@ -462,7 +461,7 @@
 
     <div class="summary-card" aria-live="polite">
       <div class="summary-title">Summary by 𝕏@NNNNNNOBITA</div>
-      <div class="minimum-coins">126.9<span class="coin-symbol"> Pieverse</span></div>
+      <div class="minimum-coins">78.69<span class="coin-symbol"> Pieverse</span></div>
     </div>
 
     <div class="lottery-section">
@@ -510,8 +509,8 @@
           lottery: '🎰 抽奖任务',
           title: 'Binance Booster - Pieverse 解锁',
           subtitle: '每月解锁 1/6 · 共6轮解锁',
-          infoTitle: '📌 解锁规则说明',
-          infoText: 'Pieverse 代币采用 6个月线性解锁 机制，每月解锁总奖励的 1/6。<br>下方显示的是 每月解锁数量，将你各 Phase 的每月解锁数相加即可得到当月总解锁量。',
+          infoTitle: '解锁规则说明',
+          infoText: 'Pieverse 代币采用 6个月线性解锁 机制，每月解锁总奖励的 1/6。',
           perMonth: '每月'
         },
         en: {
@@ -520,8 +519,8 @@
           lottery: '🎰 Lottery Tasks',
           title: 'Binance Booster - Pieverse Unlock',
           subtitle: 'Monthly Unlock 1/6 · 6 Rounds Total',
-          infoTitle: '📌 Unlock Rules',
-          infoText: 'Pieverse tokens use a 6-month linear unlock mechanism, unlocking 1/6 of total rewards each month.<br>Below shows the monthly unlock amount. Add up your monthly unlocks from each Phase to get your total monthly unlock.',
+          infoTitle: 'Unlock Rules',
+          infoText: 'Pieverse tokens use a 6-month linear unlock mechanism, unlocking 1/6 of total rewards each month.',
           perMonth: 'Per month'
         }
       };
@@ -635,7 +634,7 @@
   <script>
     (function(){
       function calculateGrandTotal() {
-        const allRewards = document.querySelectorAll('.task-reward, .lottery-reward');
+        const allRewards = document.querySelectorAll('.task-reward');
         let grandTotal = 0;
 
         allRewards.forEach(reward => {
@@ -649,7 +648,7 @@
         if (minCoins) {
           const sym = minCoins.querySelector('.coin-symbol');
           const symText = sym ? sym.outerHTML : '<span class="coin-symbol"> Pieverse</span>';
-          minCoins.innerHTML = grandTotal.toFixed(1) + symText;
+          minCoins.innerHTML = grandTotal.toFixed(2) + symText;
         }
       }
 
