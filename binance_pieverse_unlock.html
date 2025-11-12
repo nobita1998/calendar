@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binance Booster - Pieverse 解锁</title>
+  <link rel="icon" type="image/png" sizes="1024x1024" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #0c0c0f 0%, #1a1a23 100%);
+      color: #ffffff;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(23, 23, 31, 0.8);
+      border-radius: 16px;
+      border: 1px solid #2b2b40;
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(240, 185, 11, 0.1);
+    }
+
+    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+
+    .title {
+      font-size: 1.65em;
+      font-weight: bold;
+      background: linear-gradient(45deg, #f0b90b, #fcd535);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+
+    .subtitle { color: #848e9c; font-size: 1em; margin-bottom: 20px; }
+
+    /* Info banner */
+    .info-banner {
+      background: linear-gradient(135deg, rgba(14, 203, 129, 0.1) 0%, rgba(23, 23, 31, 0.9) 100%);
+      border: 1px solid rgba(14, 203, 129, 0.3);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 25px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .info-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #0ecb81, #1dd1a1);
+    }
+
+    .info-banner-title {
+      font-size: 1.15em;
+      font-weight: 700;
+      color: #0ecb81;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-banner-text {
+      color: #cbd5e1;
+      font-size: 0.95em;
+      line-height: 1.6;
+    }
+
+    .info-banner-text strong {
+      color: #f0b90b;
+    }
+
+    /* Accordion layout for phases */
+    .phases-container { display: flex; flex-direction: column; gap: 20px; margin-bottom: 20px; }
+
+    .phase-accordion {
+      background: rgba(23, 23, 31, 0.6);
+      border: 1px solid #2b2b40;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .phase-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 25px;
+      background: linear-gradient(135deg, rgba(240, 185, 11, 0.15) 0%, rgba(23, 23, 31, 0.8) 100%);
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .phase-header:hover {
+      background: linear-gradient(135deg, rgba(240, 185, 11, 0.25) 0%, rgba(23, 23, 31, 0.9) 100%);
+    }
+
+    .phase-header.active {
+      border-bottom-color: #f0b90b;
+    }
+
+    .phase-header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .phase-toggle {
+      font-size: 1.2em;
+      color: #f0b90b;
+      transition: transform 0.3s ease;
+    }
+
+    .phase-toggle.expanded {
+      transform: rotate(90deg);
+    }
+
+    .phase-title {
+      font-size: 1.3em;
+      font-weight: 700;
+      color: #f0b90b;
+      letter-spacing: 0.5px;
+    }
+
+    .phase-info {
+      font-size: 0.95em;
+      color: #848e9c;
+      margin-left: 15px;
+    }
+
+    .phase-total {
+      font-size: 1.1em;
+      font-weight: 600;
+      color: #26a69a;
+    }
+
+    .phase-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+
+    .phase-content.expanded {
+      max-height: 2000px;
+    }
+
+    .phase-tasks-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      padding: 25px;
+    }
+
+    .task-card {
+      background: linear-gradient(135deg, rgba(240, 185, 11, 0.1) 0%, rgba(23, 23, 31, 0.9) 100%);
+      border: 1px solid #2b2b40;
+      border-radius: 12px;
+      padding: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .task-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #f0b90b, #fcd535); }
+
+    .task-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .task-title { font-size: 0.95em; font-weight: 600; color: #ffffff; }
+
+    .progress-bar { width: 100%; height: 8px; background: #2b2b40; border-radius: 4px; margin-bottom: 10px; overflow: hidden; position: relative; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #f0b90b, #fcd535); border-radius: 4px; position: relative; width: 100%; }
+
+    .task-footer { display: flex; justify-content: space-between; align-items: center; }
+    .task-reward { font-size: 0.95em; color: #26a69a; font-weight: 600; }
+
+    .summary-card {
+      background: linear-gradient(135deg, rgba(240, 185, 11, 0.2) 0%, rgba(23, 23, 31, 0.9) 100%);
+      border: 2px solid #f0b90b;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .summary-title { font-size: 1.1em; color: #f0b90b; margin-bottom: 8px; font-weight: 600; }
+    .minimum-coins { font-size: 1.8em; font-weight: bold; color: #ffffff; text-shadow: 0 0 20px rgba(240, 185, 11, 0.8); }
+    .coin-symbol { color: #f0b90b; margin-left: 10px; }
+
+    .watermark { text-align: right; color: #848e9c; font-size: 1em; opacity: 0.8; margin-top: 20px; padding-right: 10px; }
+
+    .lottery-section {
+      background: linear-gradient(135deg, rgba(38, 166, 154, 0.1) 0%, rgba(23, 23, 31, 0.9) 100%);
+      border: 1px solid #2b2b40;
+      border-radius: 12px;
+      padding: 25px;
+    }
+    .lottery-title { font-size: 1.45em; color: #26a69a; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+
+    .lottery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .lottery-column { display: flex; flex-direction: column; gap: 12px; }
+    .lottery-phase-title { text-align: center; color: #26a69a; font-weight: 700; font-size: 0.95em; }
+
+    .lottery-item {
+      background: rgba(38, 166, 154, 0.1);
+      border: 1px solid rgba(38, 166, 154, 0.3);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+    .lottery-reward { color: #26a69a; font-weight: 600; font-size: 1em; }
+
+    /* Back link */
+    .back-link {
+      display: inline-block;
+      background: linear-gradient(135deg, #0ecb81 0%, #1dd1a1 100%);
+      color: #000;
+      font-weight: 700;
+      padding: 8px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(14,203,129,.3);
+    }
+    .back-link:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(14,203,129,.5); }
+
+    @media (max-width: 1024px) {
+      .phase-tasks-grid { grid-template-columns: repeat(2, 1fr); }
+      .lottery-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      body { padding: 10px; }
+      .container { max-width: 100%; margin: 0; border-radius: 16px; padding: 20px; }
+      .header { margin-bottom: 20px; }
+      .title { font-size: 1.35em; }
+      .subtitle { font-size: 0.95em; }
+      .phase-tasks-grid { grid-template-columns: 1fr; gap: 12px; }
+      .phase-header { padding: 15px 20px; flex-direction: column; align-items: flex-start; gap: 10px; }
+      .phase-header-left { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .phase-title { font-size: 1.1em; }
+      .phase-info { margin-left: 0; }
+      .phase-total { font-size: 1em; }
+      .phase-tasks-grid { padding: 15px; }
+      .task-card { padding: 12px; border-radius: 10px; }
+      .task-title { font-size: 0.95em; }
+      .progress-bar { height: 6px; }
+      .summary-card { padding: 12px; }
+      .lottery-section { padding: 16px; border-radius: 10px; }
+      .lottery-grid { grid-template-columns: 1fr; gap: 12px; }
+      .lottery-title { font-size: 1.2em; }
+      .lottery-item { padding: 14px; }
+      .back-link { padding: 6px 10px; font-size: 14px; }
+      .summary-title { font-size: 1em; }
+      .minimum-coins { font-size: 1.5em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="index.html" class="back-link" aria-label="返回" onclick="if (document.referrer && new URL(document.referrer).origin === location.origin) { history.back(); return false; }">返回日历</a>
+      <h1 class="title">Binance Booster - Pieverse 解锁</h1>
+    </div>
+
+    <div class="subtitle">每月解锁 1/6 · 共6轮解锁</div>
+
+    <div class="info-banner">
+      <div class="info-banner-title">📌 解锁规则说明</div>
+      <div class="info-banner-text">
+        Pieverse 代币采用 <strong>6个月线性解锁</strong>机制，每月解锁总奖励的 1/6。<br>
+        下方显示的是 <strong>每月解锁数量</strong>，将你各 Phase 的每月解锁数相加即可得到当月总解锁量。
+      </div>
+    </div>
+
+    <div class="phases-container" aria-label="进度任务">
+      <!-- Phase 1 -->
+      <div class="phase-accordion">
+        <div class="phase-header active" data-phase="1">
+          <div class="phase-header-left">
+            <span class="phase-toggle expanded">▶</span>
+            <span class="phase-title">Phase 1</span>
+            <span class="phase-info">(8个任务 + 抽奖)</span>
+          </div>
+          <div class="phase-total">42.5 Pieverse</div>
+        </div>
+        <div class="phase-content expanded">
+          <div class="phase-tasks-grid">
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 1</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 1.25 枚</div></div>
+            </div>
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 2</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 2.5 枚</div></div>
+            </div>
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 3</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 0.625 枚</div></div>
+            </div>
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 4</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 1.25 枚</div></div>
+            </div>
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 5</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 4.167 枚</div></div>
+            </div>
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 6</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 6.25 枚</div></div>
+            </div>
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 7</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 8.33 枚</div></div>
+            </div>
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 8</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 6.25 枚</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="phase-accordion">
+        <div class="phase-header" data-phase="2">
+          <div class="phase-header-left">
+            <span class="phase-toggle">▶</span>
+            <span class="phase-title">Phase 2</span>
+            <span class="phase-info">(5个任务 + 抽奖)</span>
+          </div>
+          <div class="phase-total">31.2 Pieverse</div>
+        </div>
+        <div class="phase-content">
+          <div class="phase-tasks-grid">
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 1</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 1.667 枚</div></div>
+            </div>
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 2</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 4 枚</div></div>
+            </div>
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 3</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 2.604 枚</div></div>
+            </div>
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 4</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 6.667 枚</div></div>
+            </div>
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 5</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 3.75 枚</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 3 -->
+      <div class="phase-accordion">
+        <div class="phase-header" data-phase="3">
+          <div class="phase-header-left">
+            <span class="phase-toggle">▶</span>
+            <span class="phase-title">Phase 3</span>
+            <span class="phase-info">(5个任务 + 抽奖)</span>
+          </div>
+          <div class="phase-total">26.6 Pieverse</div>
+        </div>
+        <div class="phase-content">
+          <div class="phase-tasks-grid">
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 1</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 1.667 枚</div></div>
+            </div>
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 2</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 3.542 枚</div></div>
+            </div>
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 3</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 2.396 枚</div></div>
+            </div>
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 4</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 3.542 枚</div></div>
+            </div>
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 5</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 3.543 枚</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 4 -->
+      <div class="phase-accordion">
+        <div class="phase-header" data-phase="4">
+          <div class="phase-header-left">
+            <span class="phase-toggle">▶</span>
+            <span class="phase-title">Phase 4</span>
+            <span class="phase-info">(5个任务 + 抽奖)</span>
+          </div>
+          <div class="phase-total">26.6 Pieverse</div>
+        </div>
+        <div class="phase-content">
+          <div class="phase-tasks-grid">
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 1</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 1.667 枚</div></div>
+            </div>
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 2</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 3.542 枚</div></div>
+            </div>
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 3</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 2.396 枚</div></div>
+            </div>
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 4</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 3.542 枚</div></div>
+            </div>
+            <div class="task-card">
+              <div class="task-header"><span class="task-title">任务 5</span></div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
+              <div class="task-footer"><div class="task-reward">每月: 3.543 枚</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-card" aria-live="polite">
+      <div class="summary-title">Summary by 𝕏@NNNNNNOBITA</div>
+      <div class="minimum-coins">126.9<span class="coin-symbol"> Pieverse</span></div>
+    </div>
+
+    <div class="lottery-section">
+      <div class="lottery-title">🎰 抽奖任务</div>
+      <div class="lottery-grid">
+        <div class="lottery-column" aria-label="Phase 1">
+          <div class="lottery-phase-title">Phase 1</div>
+          <div class="lottery-item">
+            <div class="lottery-reward">每月: 12.5 枚</div>
+          </div>
+        </div>
+        <div class="lottery-column" aria-label="Phase 2">
+          <div class="lottery-phase-title">Phase 2</div>
+          <div class="lottery-item">
+            <div class="lottery-reward">每月: 12.5 枚</div>
+          </div>
+        </div>
+        <div class="lottery-column" aria-label="Phase 3">
+          <div class="lottery-phase-title">Phase 3</div>
+          <div class="lottery-item">
+            <div class="lottery-reward">每月: 12.5 枚</div>
+          </div>
+        </div>
+        <div class="lottery-column" aria-label="Phase 4">
+          <div class="lottery-phase-title">Phase 4</div>
+          <div class="lottery-item">
+            <div class="lottery-reward">每月: 12.5 枚</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="watermark">X: @NNNNNNOBITA</div>
+  </div>
+
+  <!-- i18n & title wiring -->
+  <script>
+    (function() {
+      const LANG_STORAGE_KEY = 'calendar_lang';
+      const currentLang = (function(){ try { return localStorage.getItem(LANG_STORAGE_KEY) || 'zh'; } catch(_){ return 'zh'; } })();
+      const dict = {
+        zh: {
+          back: '返回日历',
+          summary: 'Summary by 𝕏@NNNNNNOBITA',
+          lottery: '🎰 抽奖任务',
+          title: 'Binance Booster - Pieverse 解锁',
+          subtitle: '每月解锁 1/6 · 共6轮解锁',
+          infoTitle: '📌 解锁规则说明',
+          infoText: 'Pieverse 代币采用 6个月线性解锁 机制，每月解锁总奖励的 1/6。<br>下方显示的是 每月解锁数量，将你各 Phase 的每月解锁数相加即可得到当月总解锁量。',
+          perMonth: '每月'
+        },
+        en: {
+          back: 'Back to Calendar',
+          summary: 'Summary by 𝕏@NNNNNNOBITA',
+          lottery: '🎰 Lottery Tasks',
+          title: 'Binance Booster - Pieverse Unlock',
+          subtitle: 'Monthly Unlock 1/6 · 6 Rounds Total',
+          infoTitle: '📌 Unlock Rules',
+          infoText: 'Pieverse tokens use a 6-month linear unlock mechanism, unlocking 1/6 of total rewards each month.<br>Below shows the monthly unlock amount. Add up your monthly unlocks from each Phase to get your total monthly unlock.',
+          perMonth: 'Per month'
+        }
+      };
+
+      function applyI18n(){
+        try { document.documentElement.setAttribute('lang', currentLang === 'zh' ? 'zh-CN' : 'en-US'); } catch(_){ }
+        const t = dict[currentLang];
+
+        const h1 = document.querySelector('h1.title');
+        if (h1) h1.textContent = t.title;
+
+        try { document.title = t.title; } catch(_){ }
+
+        const back = document.querySelector('.back-link');
+        if (back) { back.textContent = t.back; back.setAttribute('aria-label', t.back); }
+
+        const subtitle = document.querySelector('.subtitle');
+        if (subtitle) subtitle.textContent = t.subtitle;
+
+        const infoTitle = document.querySelector('.info-banner-title');
+        if (infoTitle) infoTitle.textContent = t.infoTitle;
+
+        const infoText = document.querySelector('.info-banner-text');
+        if (infoText) infoText.innerHTML = t.infoText;
+
+        const sumTitle = document.querySelector('.summary-title');
+        if (sumTitle) sumTitle.textContent = t.summary;
+
+        const lotTitle = document.querySelector('.lottery-title');
+        if (lotTitle) lotTitle.textContent = t.lottery;
+
+        // Update all "每月:" text
+        document.querySelectorAll('.task-reward, .lottery-reward').forEach(el => {
+          el.textContent = el.textContent.replace(/每月:/g, t.perMonth + ':');
+        });
+      }
+      applyI18n();
+    })();
+  </script>
+
+  <!-- Accordion toggle functionality -->
+  <script>
+    (function(){
+      function initAccordion() {
+        const headers = document.querySelectorAll('.phase-header');
+
+        headers.forEach(header => {
+          header.addEventListener('click', function() {
+            const content = this.nextElementSibling;
+            const toggle = this.querySelector('.phase-toggle');
+            const isExpanded = content.classList.contains('expanded');
+
+            // Toggle current accordion
+            if (isExpanded) {
+              content.classList.remove('expanded');
+              this.classList.remove('active');
+              toggle.classList.remove('expanded');
+            } else {
+              content.classList.add('expanded');
+              this.classList.add('active');
+              toggle.classList.add('expanded');
+            }
+          });
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAccordion);
+      } else {
+        initAccordion();
+      }
+    })();
+  </script>
+
+  <!-- Auto-calculate phase totals -->
+  <script>
+    (function(){
+      function calculatePhaseTotals() {
+        const accordions = document.querySelectorAll('.phase-accordion');
+
+        accordions.forEach(accordion => {
+          const tasksGrid = accordion.querySelector('.phase-tasks-grid');
+          const totalElement = accordion.querySelector('.phase-total');
+
+          if (!tasksGrid || !totalElement) return;
+
+          const rewards = tasksGrid.querySelectorAll('.task-reward');
+          let total = 0;
+
+          rewards.forEach(reward => {
+            const match = (reward.textContent || '').match(/([\d.]+)/);
+            if (match) {
+              total += parseFloat(match[1]);
+            }
+          });
+
+          // Update total display
+          if (total > 0) {
+            totalElement.textContent = total.toFixed(1) + ' Pieverse';
+          }
+        });
+      }
+
+      try {
+        setTimeout(() => calculatePhaseTotals(), 100);
+      } catch(e) {}
+    })();
+  </script>
+
+  <!-- Calculate grand total -->
+  <script>
+    (function(){
+      function calculateGrandTotal() {
+        const allRewards = document.querySelectorAll('.task-reward, .lottery-reward');
+        let grandTotal = 0;
+
+        allRewards.forEach(reward => {
+          const match = (reward.textContent || '').match(/([\d.]+)/);
+          if (match) {
+            grandTotal += parseFloat(match[1]);
+          }
+        });
+
+        const minCoins = document.querySelector('.minimum-coins');
+        if (minCoins) {
+          const sym = minCoins.querySelector('.coin-symbol');
+          const symText = sym ? sym.outerHTML : '<span class="coin-symbol"> Pieverse</span>';
+          minCoins.innerHTML = grandTotal.toFixed(1) + symText;
+        }
+      }
+
+      try {
+        setTimeout(() => calculateGrandTotal(), 150);
+      } catch(e) {}
+    })();
+  </script>
+
+  <script src="scripts/analytics.js" defer></script>
+</body>
+</html>
