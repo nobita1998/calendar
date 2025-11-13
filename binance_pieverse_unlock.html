@@ -603,7 +603,11 @@
           lottery: '🎰 抽奖任务',
           title: 'Binance Booster - Pieverse 解锁',
           perMonth: '每月',
-          probability: '中奖率:'
+          probability: '中奖率:',
+          winners: '人中奖',
+          phase: 'Phase',
+          lotteryTask: '抽奖',
+          coins: '币'
         },
         en: {
           back: 'Back to Calendar',
@@ -617,7 +621,11 @@
           infoTitle: 'Unlock Rules',
           infoText: 'Pieverse tokens use a 6-month linear unlock mechanism, unlocking 1/6 of total rewards each month.',
           perMonth: 'Per month',
-          probability: 'Win Rate:'
+          probability: 'Win Rate:',
+          winners: 'winners',
+          phase: 'Phase',
+          lotteryTask: 'Lottery',
+          coins: 'coins'
         }
       };
 
@@ -657,14 +665,58 @@
         const lotTitle = document.querySelector('.lottery-title');
         if (lotTitle) lotTitle.textContent = t.lottery;
 
-        // Update all "每月:" text
-        document.querySelectorAll('.task-reward, .lottery-reward').forEach(el => {
-          el.textContent = el.textContent.replace(/每月:/g, t.perMonth + ':');
+        // Update all "每月:" text and "币" to coins
+        document.querySelectorAll('.task-reward').forEach(el => {
+          let text = el.textContent;
+          // Replace "每月:" with translated text
+          text = text.replace(/每月:/g, t.perMonth + ':');
+          // Replace "币" with translated coins
+          text = text.replace(/([0-9.]+)\s*币/, `$1 ${t.coins}`);
+          el.textContent = text;
         });
 
         // Update all "中奖率:" text
-        document.querySelectorAll('.lottery-probability').forEach(el => {
-          el.textContent = el.textContent.replace(/中奖率:/g, t.probability + ' ');
+        document.querySelectorAll('.lottery-rate').forEach(el => {
+          const text = el.textContent;
+          const match = text.match(/中奖率:\s*([0-9.]+)%\s*\|\s*([0-9,]+)人中奖/);
+          if (match) {
+            const rate = match[1];
+            const winners = match[2];
+            el.textContent = currentLang === 'en'
+              ? `${t.probability} ${rate}% | ${winners} ${t.winners}`
+              : `中奖率: ${rate}% | ${winners}人中奖`;
+          }
+        });
+
+        // Update lottery phase titles
+        document.querySelectorAll('.lottery-phase-title').forEach(el => {
+          const text = el.textContent;
+          const match = text.match(/Phase\s*(\d+)\s*抽奖\s*(\d*)/);
+          if (match) {
+            const phaseNum = match[1];
+            const lotteryNum = match[2];
+            if (lotteryNum) {
+              el.textContent = currentLang === 'en'
+                ? `${t.phase} ${phaseNum} ${t.lotteryTask} ${lotteryNum}`
+                : `Phase ${phaseNum} 抽奖 ${lotteryNum}`;
+            } else {
+              el.textContent = currentLang === 'en'
+                ? `${t.phase} ${phaseNum} ${t.lotteryTask}`
+                : `Phase ${phaseNum} 抽奖`;
+            }
+          }
+        });
+
+        // Update lottery rewards "币" to "coins"
+        document.querySelectorAll('.lottery-reward').forEach(el => {
+          const text = el.textContent;
+          // Match pattern like "12.5 币" or "1.667 币"
+          const match = text.match(/([0-9.]+)\s*币/);
+          if (match) {
+            const amount = match[1];
+            // Only update the coin part, keep USDT annotations if they exist
+            el.textContent = text.replace(/([0-9.]+)\s*币/, `$1 ${t.coins}`);
+          }
         });
       }
       applyI18n();
@@ -731,12 +783,14 @@
 
           // Update total display
           if (total > 0) {
-            let displayText = total.toFixed(1) + ' 币';
+            const currentLang = lang();
+            const coinText = currentLang === 'en' ? 'coins' : '币';
+            let displayText = total.toFixed(1) + ' ' + coinText;
 
             // Add USDT price if available
             if (isFinite(price) && price > 0) {
               const usdValue = fmt(total * price);
-              displayText += (lang() === 'en' ? ` ($${usdValue})` : ` (≈$${usdValue})`);
+              displayText += (currentLang === 'en' ? ` ($${usdValue})` : ` (≈$${usdValue})`);
             }
 
             totalElement.textContent = displayText;
