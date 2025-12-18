@@ -479,6 +479,104 @@
             margin-top: 2px;
         }
 
+        /* Pending warning indicator */
+        .pending-indicator {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            cursor: help;
+            z-index: 10;
+            box-shadow: 0 2px 6px rgba(255, 107, 107, 0.5);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .pending-indicator:hover {
+            transform: scale(1.15);
+            box-shadow: 0 3px 10px rgba(255, 107, 107, 0.7);
+        }
+
+        .pending-indicator .pending-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            margin-bottom: 6px;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .pending-indicator .pending-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .pending-indicator:hover .pending-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .pending-tooltip a {
+            color: #f0b90b;
+            text-decoration: underline;
+        }
+
+        .pending-tooltip a:hover {
+            color: #f8d12f;
+        }
+
+        @media (max-width: 768px) {
+            .pending-indicator {
+                width: 16px;
+                height: 16px;
+                font-size: 11px;
+                top: 4px;
+                left: 4px;
+            }
+            .pending-indicator .pending-tooltip {
+                font-size: 11px;
+                padding: 6px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .pending-indicator {
+                width: 14px;
+                height: 14px;
+                font-size: 10px;
+                top: 3px;
+                left: 3px;
+            }
+            .pending-indicator .pending-tooltip {
+                font-size: 10px;
+                padding: 5px 8px;
+            }
+        }
+
         .today {
             border: 4px solid #f0b90b;
             box-shadow: 0 0 25px rgba(240, 185, 11, 0.8), 
@@ -1035,7 +1133,8 @@
                 copyEvmBtn: '📋 复制 EVM 地址',
                 copySolBtn: '📋 复制 Solana 地址',
                 copied: '✅ 已复制！',
-                copyFailed: '复制失败，请手动复制'
+                copyFailed: '复制失败，请手动复制',
+                pendingTooltip: '待定，详见 <a href="https://x.com/NNNNNNOBITA/status/2001628341330436437" target="_blank">@NNNNNNOBITA</a>'
             },
             en: {
                 title: 'Binance Booster Unlock Calendar',
@@ -1059,7 +1158,8 @@
                 copyEvmBtn: '📋 Copy EVM Address',
                 copySolBtn: '📋 Copy Solana Address',
                 copied: '✅ Copied!',
-                copyFailed: 'Copy failed, please copy manually'
+                copyFailed: 'Copy failed, please copy manually',
+                pendingTooltip: 'Pending, see <a href="https://x.com/NNNNNNOBITA/status/2001628341330436437" target="_blank">@NNNNNNOBITA</a>'
             }
         };
 
@@ -1299,7 +1399,8 @@
                             "round": "第五次解锁",
                             "daysFromTGE": 121,
                             "period": "Week10-11",
-                            "profitLink": "binance_bas_fifth_unlock.html"
+                            "profitLink": "binance_bas_fifth_unlock.html",
+                            "pending": true
                         }
                     ]
                 },
@@ -1559,7 +1660,8 @@
                             round: unlock.round,
                             period: unlock.period,
                             date: unlockDate.toISOString().split('T')[0],
-                            profitLink: unlock.profitLink || null
+                            profitLink: unlock.profitLink || null,
+                            pending: unlock.pending || false
                         });
                     }
                 });
@@ -1621,7 +1723,10 @@
                                day === todayUTC8.getDate());
                 
                 let eventsHTML = '';
+                let hasPendingEvent = false;
                 if (hasEvents) {
+                    // Check if any event has pending flag
+                    hasPendingEvent = unlockEventList.some(event => event.pending);
                     eventsHTML = unlockEventList.map(event => `
                         <div class="unlock-info">
                             <div class="token-symbol">${event.token}</div>
@@ -1629,6 +1734,12 @@
                             <div class="unlock-period">${event.period}</div>
                         </div>
                     `).join('');
+                }
+
+                // Add pending indicator if needed
+                let pendingHTML = '';
+                if (hasPendingEvent) {
+                    pendingHTML = `<div class="pending-indicator">!<span class="pending-tooltip">${t('pendingTooltip')}</span></div>`;
                 }
 
                 // Build CSS classes
@@ -1655,6 +1766,7 @@
 
                 calendarHTML += `
                     <div class="${cssClasses} ${dayProfitLink ? 'clickable' : ''}" ${ariaLabel} ${dayProfitLink ? 'tabindex="0"' : ''} ${keyHandler} ${dayProfitLink ? `onclick="openProfitLink('${dayProfitLink}')"` : ''}>
+                        ${pendingHTML}
                         <div class="day-number">${day}</div>
                         ${eventsHTML}
                     </div>
