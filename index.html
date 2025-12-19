@@ -431,6 +431,11 @@
             z-index: 1;
         }
 
+        .calendar-day.unlock-event.has-pending {
+            overflow: visible;
+            z-index: 3;
+        }
+
         .unlock-event::before {
             content: '🎁';
             position: absolute;
@@ -494,7 +499,7 @@
             font-size: 14px;
             font-weight: bold;
             color: #fff;
-            cursor: help;
+            cursor: pointer;
             z-index: 10;
             box-shadow: 0 2px 6px rgba(255, 107, 107, 0.5);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -516,7 +521,9 @@
             border-radius: 8px;
             font-size: 12px;
             font-weight: 500;
-            white-space: nowrap;
+            white-space: normal;
+            text-align: center;
+            max-width: 220px;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.2s ease, visibility 0.2s ease;
@@ -535,7 +542,7 @@
             border-top-color: rgba(0, 0, 0, 0.9);
         }
 
-        .pending-indicator:hover .pending-tooltip {
+        .pending-indicator.is-open .pending-tooltip {
             opacity: 1;
             visibility: visible;
         }
@@ -573,7 +580,18 @@
             }
             .pending-indicator .pending-tooltip {
                 font-size: 10px;
-                padding: 5px 8px;
+                padding: 6px 8px;
+                top: 120%;
+                bottom: auto;
+                margin-top: 6px;
+                margin-bottom: 0;
+                max-width: 180px;
+            }
+            .pending-indicator .pending-tooltip::after {
+                top: auto;
+                bottom: 100%;
+                border-top-color: transparent;
+                border-bottom-color: rgba(0, 0, 0, 0.9);
             }
         }
 
@@ -1137,7 +1155,8 @@
                 copySolBtn: '📋 复制 Solana 地址',
                 copied: '✅ 已复制！',
                 copyFailed: '复制失败，请手动复制',
-                pendingTooltip: '待定，详见 <a href="https://x.com/NNNNNNOBITA/status/2001628341330436437" target="_blank">@NNNNNNOBITA</a>'
+                pendingTooltip: '2025年12月19号已发放',
+                pendingButtonLabel: '解锁提示'
             },
             en: {
                 title: 'Binance Booster Unlock Calendar',
@@ -1162,7 +1181,8 @@
                 copySolBtn: '📋 Copy Solana Address',
                 copied: '✅ Copied!',
                 copyFailed: 'Copy failed, please copy manually',
-                pendingTooltip: 'Pending, see <a href="https://x.com/NNNNNNOBITA/status/2001628341330436437" target="_blank">@NNNNNNOBITA</a>'
+                pendingTooltip: 'Released on Dec 19, 2025',
+                pendingButtonLabel: 'Unlock note'
             }
         };
 
@@ -1748,12 +1768,13 @@
                 // Add pending indicator if needed
                 let pendingHTML = '';
                 if (hasPendingEvent) {
-                    pendingHTML = `<div class="pending-indicator">!<span class="pending-tooltip">${t('pendingTooltip')}</span></div>`;
+                    pendingHTML = `<div class="pending-indicator" role="button" tabindex="0" aria-label="${t('pendingButtonLabel')}">!<span class="pending-tooltip" role="tooltip">${t('pendingTooltip')}</span></div>`;
                 }
 
                 // Build CSS classes
                 let cssClasses = 'calendar-day';
                 if (hasEvents) cssClasses += ' unlock-event';
+                if (hasPendingEvent) cssClasses += ' has-pending';
                 if (isToday) cssClasses += ' today';
 
                 // Determine a profit link for this day (first available)
@@ -1850,11 +1871,49 @@ function generateNotes() {
             document.getElementById('monthTitle').textContent = getMonthTitleLocalized();
             document.getElementById('calendarGrid').innerHTML = generateCalendar();
             document.getElementById('notesSection').innerHTML = generateNotes();
+            bindPendingIndicators();
             rehydrateProfitAnchors();
             try { document.querySelectorAll('.calendar-day.today').forEach(el => el.setAttribute('data-today-label', t('today'))); } catch (_) {}
             try { document.querySelectorAll('#notesSection a.profit-link').forEach(a => { a.textContent = t('profitLink'); }); } catch (_) {}
             localizeRoundsInDOM();
             updateDisclaimer();
+        }
+
+        function closePendingTooltips(exceptEl) {
+            try {
+                document.querySelectorAll('.pending-indicator.is-open').forEach(el => {
+                    if (exceptEl && el === exceptEl) return;
+                    el.classList.remove('is-open');
+                });
+            } catch (_) {}
+        }
+
+        function bindPendingIndicators() {
+            const indicators = document.querySelectorAll('.pending-indicator');
+            indicators.forEach(indicator => {
+                indicator.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const willOpen = !indicator.classList.contains('is-open');
+                    closePendingTooltips(indicator);
+                    if (willOpen) {
+                        indicator.classList.add('is-open');
+                    } else {
+                        indicator.classList.remove('is-open');
+                    }
+                });
+                indicator.addEventListener('keydown', function(e) {
+                    if (e.key !== 'Enter' && e.key !== ' ') return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const willOpen = !indicator.classList.contains('is-open');
+                    closePendingTooltips(indicator);
+                    if (willOpen) {
+                        indicator.classList.add('is-open');
+                    } else {
+                        indicator.classList.remove('is-open');
+                    }
+                });
+            });
         }
 
         function updateDisclaimer() {
@@ -2267,6 +2326,14 @@ function trackPageView() {
             // disabled: calendar down counter
             return true;
         }
+
+        document.addEventListener('click', function() {
+            closePendingTooltips();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closePendingTooltips();
+        });
 
         // Intercept clicks on the promo code link early to avoid duplicate handlers
         document.addEventListener('click', function(e) {
