@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binance Booster - Reva 解锁</title>
+  <link rel="icon" type="image/png" sizes="1024x1024" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #0c0c0f 0%, #1a1a23 100%);
+      color: #ffffff;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(23, 23, 31, 0.8);
+      border-radius: 16px;
+      border: 1px solid #2b2b40;
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(240, 185, 11, 0.1);
+    }
+
+    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+
+    .title {
+      font-size: 1.65em;
+      font-weight: bold;
+      background: linear-gradient(45deg, #f0b90b, #fcd535);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+
+    .subtitle { color: #848e9c; font-size: 1em; margin-bottom: 20px; }
+
+    /* Info banner */
+    .info-banner {
+      background: linear-gradient(135deg, rgba(14, 203, 129, 0.1) 0%, rgba(23, 23, 31, 0.9) 100%);
+      border: 1px solid rgba(14, 203, 129, 0.3);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 25px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .info-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #0ecb81, #1dd1a1);
+    }
+
+    .info-banner-title {
+      font-size: 1.15em;
+      font-weight: 700;
+      color: #0ecb81;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-banner-text {
+      color: #cbd5e1;
+      font-size: 0.95em;
+      line-height: 1.6;
+    }
+
+    .info-banner-text strong {
+      color: #f0b90b;
+    }
+
+    /* Phase grid layout */
+    .phases-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .phase-card {
+      background: linear-gradient(135deg, rgba(240, 185, 11, 0.1) 0%, rgba(23, 23, 31, 0.9) 100%);
+      border: 1px solid #2b2b40;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .phase-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #f0b90b, #fcd535);
+    }
+
+    .phase-title {
+      font-size: 1.1em;
+      font-weight: 700;
+      color: #f0b90b;
+      margin-bottom: 15px;
+    }
+
+    .phase-coins {
+      font-size: 1.5em;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .phase-usd {
+      font-size: 0.85em;
+      color: #26a69a;
+      font-weight: 600;
+    }
+
+    .summary-card {
+      background: linear-gradient(135deg, rgba(240, 185, 11, 0.2) 0%, rgba(23, 23, 31, 0.9) 100%);
+      border: 2px solid #f0b90b;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .summary-title { font-size: 1.1em; color: #f0b90b; margin-bottom: 8px; font-weight: 600; }
+    .minimum-coins { font-size: 1.8em; font-weight: bold; color: #ffffff; text-shadow: 0 0 20px rgba(240, 185, 11, 0.8); margin-bottom: 12px; }
+    .author-info {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      font-size: 0.75em;
+    }
+    .author-label {
+      display: none;
+    }
+    .social-accounts {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-end;
+    }
+    .social-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .social-platform {
+      color: #848e9c;
+    }
+    .social-handle {
+      color: #f0b90b;
+      font-weight: 600;
+    }
+    .coin-symbol { color: #f0b90b; margin-left: 10px; }
+
+    .watermark { text-align: right; color: #848e9c; font-size: 1em; opacity: 0.8; margin-top: 20px; padding-right: 10px; }
+
+    .lottery-section {
+      background: linear-gradient(135deg, rgba(38, 166, 154, 0.1) 0%, rgba(23, 23, 31, 0.9) 100%);
+      border: 1px solid #2b2b40;
+      border-radius: 12px;
+      padding: 20px 25px;
+    }
+
+    .lottery-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .lottery-icon {
+      font-size: 1.5em;
+    }
+
+    .lottery-title {
+      font-size: 1.1em;
+      font-weight: 600;
+      color: #26a69a;
+    }
+
+    .lottery-desc {
+      color: #848e9c;
+      font-size: 0.85em;
+      margin-left: auto;
+    }
+
+    .lottery-grid {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      gap: 10px;
+    }
+
+    .lottery-item {
+      background: rgba(23, 23, 31, 0.6);
+      border: 1px solid #2b2b40;
+      border-radius: 8px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+
+    .lottery-wins {
+      font-size: 0.85em;
+      color: #848e9c;
+      margin-bottom: 6px;
+    }
+
+    .lottery-coins {
+      font-size: 1.1em;
+      font-weight: 700;
+      color: #f0b90b;
+    }
+
+    .lottery-usd {
+      font-size: 0.75em;
+      color: #26a69a;
+      margin-top: 4px;
+    }
+
+    /* Back link */
+    .back-link {
+      display: inline-block;
+      background: linear-gradient(135deg, #0ecb81 0%, #1dd1a1 100%);
+      color: #000;
+      font-weight: 700;
+      padding: 8px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(14,203,129,.3);
+    }
+    .back-link:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(14,203,129,.5); }
+
+    @media (max-width: 1024px) {
+      .phases-container { grid-template-columns: repeat(2, 1fr); }
+      .lottery-grid { grid-template-columns: repeat(5, 1fr); }
+    }
+    @media (max-width: 768px) {
+      body { padding: 10px; }
+      .container { max-width: 100%; margin: 0; border-radius: 16px; padding: 20px; }
+      .header { margin-bottom: 20px; }
+      .title { font-size: 1.35em; }
+      .subtitle { font-size: 0.95em; }
+      .phases-container { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .phase-card { padding: 15px; }
+      .phase-title { font-size: 1em; margin-bottom: 10px; }
+      .phase-coins { font-size: 1.2em; }
+      .phase-usd { font-size: 0.8em; }
+      .summary-card { padding: 12px; padding-top: 40px; }
+      .author-info { top: 8px; right: 8px; font-size: 0.7em; }
+      .lottery-section { padding: 15px; }
+      .lottery-header { flex-wrap: wrap; margin-bottom: 12px; }
+      .lottery-desc { margin-left: 0; width: 100%; margin-top: 5px; }
+      .lottery-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .lottery-item { padding: 10px 6px; }
+      .lottery-wins { font-size: 0.75em; }
+      .lottery-coins { font-size: 1em; }
+      .lottery-usd { font-size: 0.7em; }
+      .back-link { padding: 6px 10px; font-size: 14px; }
+      .summary-title { font-size: 1em; }
+      .minimum-coins { font-size: 1.5em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="index.html" class="back-link" aria-label="返回" onclick="if (document.referrer && new URL(document.referrer).origin === location.origin) { history.back(); return false; }">返回日历</a>
+      <h1 class="title">Binance Booster - Reva 解锁</h1>
+    </div>
+
+    <div class="phases-container" aria-label="进度任务">
+      <div class="phase-card" data-coins="50">
+        <div class="phase-title">Phase 1</div>
+        <div class="phase-coins">50 币</div>
+        <div class="phase-usd"></div>
+      </div>
+      <div class="phase-card" data-coins="52">
+        <div class="phase-title">Phase 2</div>
+        <div class="phase-coins">52 币</div>
+        <div class="phase-usd"></div>
+      </div>
+      <div class="phase-card" data-coins="56">
+        <div class="phase-title">Phase 3</div>
+        <div class="phase-coins">56 币</div>
+        <div class="phase-usd"></div>
+      </div>
+      <div class="phase-card" data-coins="62">
+        <div class="phase-title">Phase 4</div>
+        <div class="phase-coins">62 币</div>
+        <div class="phase-usd"></div>
+      </div>
+      <div class="phase-card" data-coins="66">
+        <div class="phase-title">Phase 5</div>
+        <div class="phase-coins">66 币</div>
+        <div class="phase-usd"></div>
+      </div>
+      <div class="phase-card" data-coins="66">
+        <div class="phase-title">Phase 6</div>
+        <div class="phase-coins">66 币</div>
+        <div class="phase-usd"></div>
+      </div>
+      <div class="phase-card" data-coins="75">
+        <div class="phase-title">Phase 7</div>
+        <div class="phase-coins">75 币</div>
+        <div class="phase-usd"></div>
+      </div>
+      <div class="phase-card" data-coins="75">
+        <div class="phase-title">Phase 8</div>
+        <div class="phase-coins">75 币</div>
+        <div class="phase-usd"></div>
+      </div>
+    </div>
+
+    <div class="summary-card" aria-live="polite">
+      <div class="summary-title">总计（Summary）</div>
+      <div class="minimum-coins">502<span class="coin-symbol">🪙</span></div>
+      <div class="author-info">
+        <span class="author-label">作者：</span>
+        <div class="social-accounts">
+          <div class="social-item">
+            <span class="social-platform">推特:</span>
+            <span class="social-handle">@NNNNNNOBITA</span>
+          </div>
+          <div class="social-item">
+            <span class="social-platform">币安广场:</span>
+            <span class="social-handle">@NNNNNNobita</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lottery-section">
+      <div class="lottery-header">
+        <span class="lottery-icon">🎰</span>
+        <span class="lottery-title">抽奖任务</span>
+        <span class="lottery-desc">每期 100 币，共 8 期</span>
+      </div>
+      <div class="lottery-grid">
+        <div class="lottery-item" data-wins="0">
+          <div class="lottery-wins">中 0 期</div>
+          <div class="lottery-coins">0</div>
+          <div class="lottery-usd"></div>
+        </div>
+        <div class="lottery-item" data-wins="1">
+          <div class="lottery-wins">中 1 期</div>
+          <div class="lottery-coins">100</div>
+          <div class="lottery-usd"></div>
+        </div>
+        <div class="lottery-item" data-wins="2">
+          <div class="lottery-wins">中 2 期</div>
+          <div class="lottery-coins">200</div>
+          <div class="lottery-usd"></div>
+        </div>
+        <div class="lottery-item" data-wins="3">
+          <div class="lottery-wins">中 3 期</div>
+          <div class="lottery-coins">300</div>
+          <div class="lottery-usd"></div>
+        </div>
+        <div class="lottery-item" data-wins="4">
+          <div class="lottery-wins">中 4 期</div>
+          <div class="lottery-coins">400</div>
+          <div class="lottery-usd"></div>
+        </div>
+        <div class="lottery-item" data-wins="5">
+          <div class="lottery-wins">中 5 期</div>
+          <div class="lottery-coins">500</div>
+          <div class="lottery-usd"></div>
+        </div>
+        <div class="lottery-item" data-wins="6">
+          <div class="lottery-wins">中 6 期</div>
+          <div class="lottery-coins">600</div>
+          <div class="lottery-usd"></div>
+        </div>
+        <div class="lottery-item" data-wins="7">
+          <div class="lottery-wins">中 7 期</div>
+          <div class="lottery-coins">700</div>
+          <div class="lottery-usd"></div>
+        </div>
+        <div class="lottery-item" data-wins="8">
+          <div class="lottery-wins">中 8 期</div>
+          <div class="lottery-coins">800</div>
+          <div class="lottery-usd"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="watermark">X: @NNNNNNOBITA</div>
+  </div>
+
+  <!-- i18n & title wiring -->
+  <script>
+    (function() {
+      const LANG_STORAGE_KEY = 'calendar_lang';
+      const currentLang = (function(){ try { return localStorage.getItem(LANG_STORAGE_KEY) || 'zh'; } catch(_){ return 'zh'; } })();
+      const dict = {
+        zh: {
+          back: '返回日历',
+          summary: 'Summary',
+          author: '作者：',
+          twitter: '推特:',
+          binanceSquare: '币安广场:',
+          lottery: '🎰 抽奖任务',
+          title: 'Binance Booster - Reva 解锁',
+          phase: 'Phase',
+          lotteryTask: '抽奖',
+          coins: '币',
+          total: '总计',
+          lotteryDesc: '每期 100 币，共 8 期',
+          lotteryWin: '中 {n} 期'
+        },
+        en: {
+          back: 'Back to Calendar',
+          summary: 'Summary',
+          author: 'Author:',
+          twitter: 'Twitter:',
+          binanceSquare: 'Binance Square:',
+          lottery: '🎰 Lottery Tasks',
+          title: 'Binance Booster - Reva Unlock',
+          phase: 'Phase',
+          lotteryTask: 'Lottery',
+          coins: 'coins',
+          total: 'Total',
+          lotteryDesc: '100 coins × 8 phases',
+          lotteryWin: '{n} wins'
+        }
+      };
+
+      function applyI18n(){
+        try { document.documentElement.setAttribute('lang', currentLang === 'zh' ? 'zh-CN' : 'en-US'); } catch(_){ }
+        const t = dict[currentLang];
+
+        const h1 = document.querySelector('h1.title');
+        if (h1) h1.textContent = t.title;
+
+        try { document.title = t.title; } catch(_){ }
+
+        const back = document.querySelector('.back-link');
+        if (back) { back.textContent = t.back; back.setAttribute('aria-label', t.back); }
+
+        const sumTitle = document.querySelector('.summary-title');
+        if (sumTitle) sumTitle.textContent = t.summary;
+
+        const authorLabel = document.querySelector('.author-label');
+        if (authorLabel) authorLabel.textContent = t.author;
+
+        const platforms = document.querySelectorAll('.social-platform');
+        if (platforms.length >= 2) {
+          platforms[0].textContent = t.twitter;
+          platforms[1].textContent = t.binanceSquare;
+        }
+
+        const lotTitle = document.querySelector('.lottery-title');
+        if (lotTitle) lotTitle.textContent = t.lottery;
+
+        // Update task titles
+        document.querySelectorAll('.task-title').forEach(el => {
+          if (el.textContent.includes('总计') || el.textContent.includes('Total')) {
+            el.textContent = t.total;
+          }
+        });
+
+        // Update all "币" to coins
+        document.querySelectorAll('.phase-coins').forEach(el => {
+          let text = el.textContent;
+          text = text.replace(/([0-9.]+)\s*币/, `$1 ${t.coins}`);
+          el.textContent = text;
+        });
+
+        // Update lottery section
+        const lotteryTitle = document.querySelector('.lottery-title');
+        if (lotteryTitle) lotteryTitle.textContent = t.lottery.replace('🎰 ', '');
+
+        const lotteryDesc = document.querySelector('.lottery-desc');
+        if (lotteryDesc) lotteryDesc.textContent = t.lotteryDesc;
+
+        // Update lottery win labels
+        document.querySelectorAll('.lottery-item').forEach(item => {
+          const wins = item.dataset.wins;
+          const winsEl = item.querySelector('.lottery-wins');
+          if (winsEl) {
+            winsEl.textContent = t.lotteryWin.replace('{n}', wins);
+          }
+        });
+      }
+      applyI18n();
+    })();
+  </script>
+
+  <!-- Price annotation: REVAUSDT -->
+  <script>
+    (function(){
+      const API = 'https://fapi.binance.com/fapi/v1/ticker/price?symbol=REVAUSDT';
+      function fmt(n){ const v = Number(n); return isFinite(v) ? v.toFixed(2) : ''; }
+      function lang(){ try { return localStorage.getItem('calendar_lang') || 'zh'; } catch(_){ return 'zh'; } }
+
+      function annotateSummary(price){
+        const el = document.querySelector('.minimum-coins');
+        if (!el || el.querySelector('.usd-suffix')) return;
+        const m = (el.textContent||'').replace(/,/g,'').match(/([\d.]+)/);
+        if (!m) return;
+        const coins = parseFloat(m[1]);
+        if (!isFinite(coins)) return;
+        const span = document.createElement('span');
+        span.className = 'usd-suffix';
+        span.style.fontSize = '0.7em';
+        span.style.marginLeft = '8px';
+        span.style.color = '#f0b90b';
+        span.textContent = (lang()==='en' ? ` ($${fmt(coins*price)} USDT)` : ` ≈$${fmt(coins*price)} USDT`);
+        el.appendChild(span);
+      }
+
+      function annotatePhaseCards(price){
+        if (!isFinite(price)) return;
+        document.querySelectorAll('.phase-card').forEach(card => {
+          const coins = parseFloat(card.dataset.coins);
+          const usdEl = card.querySelector('.phase-usd');
+          if (usdEl && isFinite(coins)) {
+            usdEl.textContent = `≈$${fmt(coins * price)} USDT`;
+          }
+        });
+      }
+
+      function annotateLotteryItems(price){
+        if (!isFinite(price) || price <= 0) return;
+        document.querySelectorAll('.lottery-item').forEach(item => {
+          const wins = parseInt(item.dataset.wins) || 0;
+          const coins = wins * 100;
+          const usdEl = item.querySelector('.lottery-usd');
+          if (usdEl) {
+            usdEl.textContent = coins > 0 ? `$${fmt(coins * price)}` : '';
+          }
+        });
+      }
+
+      function annotate(price){
+        annotateSummary(price);
+        annotatePhaseCards(price);
+        annotateLotteryItems(price);
+      }
+
+      try {
+        fetch(API).then(r=>r.json()).then(d=>{
+          const p = parseFloat(d && (d.price||d.lastPrice));
+          if (isFinite(p)) annotate(p);
+        }).catch(()=>{});
+      } catch(_) {}
+    })();
+  </script>
+
+  <script src="scripts/analytics.js" defer></script>
+</body>
+</html>
