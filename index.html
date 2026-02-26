@@ -1021,6 +1021,132 @@
                 padding: 8px 10px;
             }
         }
+
+        /* ===== Bottom Sheet / Modal for multi-event days ===== */
+        .bottom-sheet-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+        .bottom-sheet-overlay.active {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .bottom-sheet {
+            background: linear-gradient(145deg, #1e2329 0%, #2b3139 100%);
+            border-radius: 20px 20px 0 0;
+            width: 100%;
+            max-width: 500px;
+            padding: 0;
+            max-height: 70vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .bottom-sheet-handle {
+            width: 40px;
+            height: 4px;
+            background: #474d57;
+            border-radius: 2px;
+            margin: 12px auto 8px;
+        }
+        .bottom-sheet-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #f0b90b;
+            text-align: center;
+            padding: 4px 20px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .bottom-sheet-events {
+            padding: 12px 20px 24px;
+        }
+        .bottom-sheet-event {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #0ecb81 0%, #1dd1a1 100%);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .bottom-sheet-event:last-child {
+            margin-bottom: 0;
+        }
+        .bottom-sheet-event:active {
+            transform: scale(0.97);
+        }
+        .bottom-sheet-event-info {
+            flex: 1;
+        }
+        .bottom-sheet-event-token {
+            display: inline-block;
+            background: linear-gradient(135deg, #f0b90b 0%, #f8d12f 100%);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            color: #000;
+            margin-bottom: 4px;
+            border: 1.5px solid rgba(255,255,255,0.5);
+        }
+        .bottom-sheet-event-round {
+            font-size: 13px;
+            color: #000;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+        .bottom-sheet-event-period {
+            font-size: 11px;
+            color: rgba(0,0,0,0.7);
+            margin-top: 1px;
+        }
+        .bottom-sheet-event-arrow {
+            font-size: 18px;
+            color: rgba(0,0,0,0.5);
+            margin-left: 12px;
+            flex-shrink: 0;
+        }
+        .bottom-sheet-event.no-link {
+            cursor: default;
+            opacity: 0.85;
+        }
+        .bottom-sheet-event.no-link .bottom-sheet-event-arrow {
+            display: none;
+        }
+
+        .multi-event-count {
+            font-size: 13px;
+            color: #000;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        /* Desktop: centered modal instead of bottom sheet */
+        @media (min-width: 769px) {
+            .bottom-sheet-overlay.active {
+                align-items: center;
+            }
+            .bottom-sheet {
+                border-radius: 20px;
+                max-width: 420px;
+                animation: fadeScaleIn 0.25s ease-out;
+            }
+            @keyframes fadeScaleIn {
+                from { transform: scale(0.9); opacity: 0; }
+                to { transform: scale(1); opacity: 1; }
+            }
+        }
     </style>
 </head>
 <body>
@@ -1155,7 +1281,10 @@
                 copied: '✅ 已复制！',
                 copyFailed: '复制失败，请手动复制',
                 pendingTooltip: '2025年12月19号已发放',
-                pendingButtonLabel: '解锁提示'
+                pendingButtonLabel: '解锁提示',
+                multiEventHint: '个项目解锁',
+                bottomSheetTitle: '解锁详情',
+                bottomSheetArrow: '查看 →'
             },
             en: {
                 title: 'Binance Booster Unlock Calendar',
@@ -1181,7 +1310,10 @@
                 copied: '✅ Copied!',
                 copyFailed: 'Copy failed, please copy manually',
                 pendingTooltip: 'Released on Dec 19, 2025',
-                pendingButtonLabel: 'Unlock note'
+                pendingButtonLabel: 'Unlock note',
+                multiEventHint: 'unlocks',
+                bottomSheetTitle: 'Unlock Details',
+                bottomSheetArrow: 'View →'
             }
         };
 
@@ -1759,16 +1891,22 @@
                 
                 let eventsHTML = '';
                 let hasPendingEvent = false;
+                const isMultiEvent = hasEvents && unlockEventList.length > 1;
                 if (hasEvents) {
-                    // Check if any event has pending flag
                     hasPendingEvent = unlockEventList.some(event => event.pending);
-                    eventsHTML = unlockEventList.map(event => `
-                        <div class="unlock-info">
-                            <div class="token-symbol">${event.token}</div>
-                            <div class="unlock-round">${translateRoundLabel(event.round)}</div>
-                            <div class="unlock-period">${event.period}</div>
-                        </div>
-                    `).join('');
+                    if (isMultiEvent) {
+                        // Multi-event: single badge with combined token names
+                        eventsHTML = `<div class="token-symbol">${unlockEventList.map(e => e.token).join(' + ')}</div>`;
+                    } else {
+                        // Single event: keep original full display
+                        eventsHTML = unlockEventList.map(event => `
+                            <div class="unlock-info">
+                                <div class="token-symbol">${event.token}</div>
+                                <div class="unlock-round">${translateRoundLabel(event.round)}</div>
+                                <div class="unlock-period">${event.period}</div>
+                            </div>
+                        `).join('');
+                    }
                 }
 
                 // Add pending indicator if needed
@@ -1783,25 +1921,33 @@
                 if (hasPendingEvent) cssClasses += ' has-pending';
                 if (isToday) cssClasses += ' today';
 
-                // Determine a profit link for this day (first available)
-                let dayProfitLink = null;
-                if (hasEvents) {
+                // Click / interaction handling
+                let clickAttr = '';
+                let keyHandler = '';
+                let ariaLabel = '';
+                let tabAttr = '';
+                let dataAttr = '';
+
+                if (isMultiEvent) {
+                    // Multi-event: store event data, open bottom sheet on click
+                    clickAttr = `onclick="openBottomSheet(this, ${day}, ${currentMonth + 1})"`;
+                    keyHandler = `onkeydown="if(event.key==='Enter'||event.key===' '){openBottomSheet(this, ${day}, ${currentMonth + 1});}"`;
+                    tabAttr = 'tabindex="0"';
+                    cssClasses += ' clickable';
+                    dataAttr = `data-events='${JSON.stringify(unlockEventList).replace(/'/g, "&#39;")}'`;
+                } else if (hasEvents) {
                     const withLink = unlockEventList.find(e => e.profitLink);
-                    if (withLink) dayProfitLink = withLink.profitLink;
+                    const dayProfitLink = withLink ? withLink.profitLink : null;
+                    if (dayProfitLink) {
+                        clickAttr = `onclick="openProfitLink('${dayProfitLink}')"`;
+                        keyHandler = `onkeydown="if(event.key==='Enter'||event.key===' '){openProfitLink('${dayProfitLink}');}"`;
+                        tabAttr = 'tabindex="0"';
+                        cssClasses += ' clickable';
+                    }
                 }
 
-                // Accessibility label
-                const ariaLabel = hasEvents
-                    ? (dayProfitLink
-                        ? `aria-label="${unlockEventList[0].token} ${unlockEventList[0].date} æ”¶ç›Šæµ‹ç®—ï¼Œç‚¹å‡»æ‰“å¼€"`
-                        : `aria-label="${unlockEventList[0].token} ${unlockEventList[0].date} è§£é”ä¿¡æ¯"`)
-                    : '';
-
-                // Key handlers for accessibility
-                const keyHandler = dayProfitLink ? `onkeydown=\"if(event.key==='Enter'||event.key===' '){openProfitLink('${dayProfitLink}');}\"` : '';
-
                 calendarHTML += `
-                    <div class="${cssClasses} ${dayProfitLink ? 'clickable' : ''}" ${ariaLabel} ${dayProfitLink ? 'tabindex="0"' : ''} ${keyHandler} ${dayProfitLink ? `onclick="openProfitLink('${dayProfitLink}')"` : ''}>
+                    <div class="${cssClasses}" ${tabAttr} ${keyHandler} ${clickAttr} ${dataAttr}>
                         ${pendingHTML}
                         <div class="day-number">${day}</div>
                         ${eventsHTML}
@@ -2085,6 +2231,48 @@ function generateNotes() {
             return false; // prevent default when used on <a>
         }
 
+        // === Bottom Sheet for multi-event days ===
+
+        function openBottomSheet(el, day, month) {
+            const eventsData = JSON.parse(el.getAttribute('data-events'));
+            const overlay = document.getElementById('bottomSheetOverlay');
+            const titleEl = document.getElementById('bottomSheetTitle');
+            const eventsEl = document.getElementById('bottomSheetEvents');
+
+            titleEl.textContent = `${month}/${day} - ${t('bottomSheetTitle')}`;
+
+            eventsEl.innerHTML = eventsData.map(event => {
+                const hasLink = !!event.profitLink;
+                return `
+                    <div class="bottom-sheet-event ${hasLink ? '' : 'no-link'}"
+                         ${hasLink ? `onclick="closeBottomSheet(); openProfitLink('${event.profitLink}')"` : ''}>
+                        <div class="bottom-sheet-event-info">
+                            <div class="bottom-sheet-event-token">${event.token}</div>
+                            <div class="bottom-sheet-event-round">${translateRoundLabel(event.round)}</div>
+                            <div class="bottom-sheet-event-period">${event.period}</div>
+                        </div>
+                        ${hasLink ? `<div class="bottom-sheet-event-arrow">${t('bottomSheetArrow')}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeBottomSheet(event) {
+            // If called from overlay click, only close if clicking overlay itself
+            if (event && event.target !== event.currentTarget) return;
+            const overlay = document.getElementById('bottomSheetOverlay');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close bottom sheet on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeBottomSheet();
+        });
+
         // === .ics Calendar Export Functions ===
 
         // Format date to iCalendar format: YYYYMMDDTHHMMSSZ
@@ -2366,6 +2554,15 @@ function trackPageView() {
         // Start the application
         init();
     </script>
+
+    <!-- Bottom Sheet Modal for multi-event days -->
+    <div class="bottom-sheet-overlay" id="bottomSheetOverlay" onclick="closeBottomSheet(event)">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="bottom-sheet-handle"></div>
+            <div class="bottom-sheet-title" id="bottomSheetTitle"></div>
+            <div class="bottom-sheet-events" id="bottomSheetEvents"></div>
+        </div>
+    </div>
 
     <script src="scripts/analytics.js" defer></script>
   </body>
