@@ -139,18 +139,6 @@
       "unlockSchedule": [
         { "round": "第一次解锁 (TGE)", "daysFromTGE": 0, "period": "Phase 1", "profitLink": "binance_unitas_booster_first_unlock.html" }
       ]
-    },
-    {
-      "symbol": "NIGHT",
-      "name": "Midnight",
-      "tgeDate": "2026-03-11",
-      "unlockSchedule": [
-        { "round": "第一次解锁 (TGE)", "daysFromTGE": 0, "period": "HODLer Airdrop + 上线" },
-        { "round": "Super Earn Q1", "daysFromTGE": 90, "period": "120M NIGHT" },
-        { "round": "Super Earn Q2", "daysFromTGE": 180, "period": "120M NIGHT" },
-        { "round": "Super Earn Q3", "daysFromTGE": 270, "period": "120M NIGHT" },
-        { "round": "Super Earn Q4", "daysFromTGE": 360, "period": "120M NIGHT" }
-      ]
     }
   ]
 }
