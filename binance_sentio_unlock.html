@@ -163,7 +163,7 @@
         <div class="reward-emoji">🪙</div>
         <div class="reward-title">每次保底</div>
         <div class="reward-subtitle">每次解锁必得</div>
-        <div class="reward-amount">73.4<span class="reward-coin">币</span></div>
+        <div class="reward-amount">86.7<span class="reward-coin">币</span></div>
       </div>
       <div class="reward-card lottery" aria-label="抽奖奖励">
         <div class="reward-emoji">🎰</div>
@@ -175,8 +175,8 @@
 
     <div class="summary-card" aria-live="polite">
       <div class="summary-title">每次保底（Per Unlock Guaranteed）</div>
-      <div class="minimum-coins">73.4<span class="coin-symbol">🪙</span></div>
-      <div class="summary-note">抽奖中奖额外 +13.3 币，最高 86.7 币</div>
+      <div class="minimum-coins">86.7<span class="coin-symbol">🪙</span></div>
+      <div class="summary-note">抽奖中奖额外 +13.3 币，最高 100.0 币</div>
       <div class="author-info">
         <span class="author-label">作者：</span>
         <div class="social-accounts">
@@ -209,7 +209,7 @@
           lotteryTitle: '抽奖中奖',
           lotterySub: '中奖后额外奖励',
           summaryTitle: '每次保底（Per Unlock Guaranteed）',
-          summaryNote: '抽奖中奖额外 +13.3 币，最高 86.7 币',
+          summaryNote: '抽奖中奖额外 +13.3 币，最高 100.0 币',
           twitter: '推特:',
           binanceSquare: '币安广场:',
           coins: '币'
@@ -222,7 +222,7 @@
           lotteryTitle: 'Lottery Bonus',
           lotterySub: 'Extra reward if won',
           summaryTitle: 'Per Unlock Guaranteed',
-          summaryNote: 'Lottery adds +13.3 coins on win, up to 86.7 coins',
+          summaryNote: 'Lottery adds +13.3 coins on win, up to 100.0 coins',
           twitter: 'Twitter:',
           binanceSquare: 'Binance Square:',
           coins: 'coins'
@@ -300,7 +300,7 @@
 
       function annotate(price){
         if (!isFinite(price)) return;
-        appendUsd(document.querySelectorAll('.reward-card')[0], 73.4, price);
+        appendUsd(document.querySelectorAll('.reward-card')[0], 86.7, price);
         appendUsd(document.querySelectorAll('.reward-card')[1], 13.3, price);
         annotateSummary(price);
       }
