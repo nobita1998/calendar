@@ -38,40 +38,6 @@
       -webkit-text-fill-color: transparent;
     }
 
-    /* Info banner */
-    .info-banner {
-      background: linear-gradient(135deg, rgba(14, 203, 129, 0.1) 0%, rgba(23, 23, 31, 0.9) 100%);
-      border: 1px solid rgba(14, 203, 129, 0.3);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 25px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .info-banner::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, #0ecb81, #1dd1a1);
-    }
-
-    .info-banner-title {
-      font-size: 1.15em;
-      font-weight: 700;
-      color: #0ecb81;
-      margin-bottom: 12px;
-    }
-
-    .info-banner-text {
-      color: #cbd5e1;
-      font-size: 0.95em;
-      line-height: 1.6;
-    }
-
-    .info-banner-text strong { color: #f0b90b; }
-
     /* Reward cards */
     .rewards-grid {
       display: grid;
@@ -192,13 +158,6 @@
       <h1 class="title">Binance Booster - Sentio 解锁</h1>
     </div>
 
-    <div class="info-banner">
-      <div class="info-banner-title">📘 解锁规则</div>
-      <div class="info-banner-text">
-        Sentio (ST) 代币分 <strong>3 次等额解锁</strong>（TGE / T+60 / T+120），每次解锁的结算完全一致。
-      </div>
-    </div>
-
     <div class="rewards-grid" aria-label="每次解锁奖励">
       <div class="reward-card guaranteed" aria-label="保底奖励">
         <div class="reward-emoji">🪙</div>
@@ -245,8 +204,6 @@
         zh: {
           back: '返回日历',
           title: 'Binance Booster - Sentio 解锁',
-          infoTitle: '📘 解锁规则',
-          infoText: 'Sentio (ST) 代币分 <strong>3 次等额解锁</strong>（TGE / T+60 / T+120），每次解锁的结算完全一致。',
           guaranteedTitle: '每次保底',
           guaranteedSub: '每次解锁必得',
           lotteryTitle: '抽奖中奖',
@@ -260,8 +217,6 @@
         en: {
           back: 'Back to Calendar',
           title: 'Binance Booster - Sentio Unlock',
-          infoTitle: '📘 Unlock Rules',
-          infoText: 'Sentio (ST) unlocks in <strong>3 equal tranches</strong> (TGE / T+60 / T+120). Every unlock has the identical settlement.',
           guaranteedTitle: 'Guaranteed',
           guaranteedSub: 'Awarded every unlock',
           lotteryTitle: 'Lottery Bonus',
@@ -284,12 +239,6 @@
 
         const back = document.querySelector('.back-link');
         if (back) { back.textContent = t.back; back.setAttribute('aria-label', t.back); }
-
-        const infoTitle = document.querySelector('.info-banner-title');
-        if (infoTitle) infoTitle.textContent = t.infoTitle;
-
-        const infoText = document.querySelector('.info-banner-text');
-        if (infoText) infoText.innerHTML = t.infoText;
 
         const cards = document.querySelectorAll('.reward-card');
         if (cards.length >= 2) {
