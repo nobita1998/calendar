@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "lastUpdated": "2026-03-17",
+  "lastUpdated": "2026-05-24",
   "tokens": [
     {
       "symbol": "BAS",
@@ -129,7 +129,8 @@
       "name": "Opinion Token",
       "tgeDate": "2026-03-05",
       "unlockSchedule": [
-        { "round": "第一次解锁 (TGE)", "daysFromTGE": 0, "period": "Phase 1", "profitLink": "binance_opn_first_unlock.html" }
+        { "round": "第一次解锁 (TGE)", "daysFromTGE": 0, "period": "Phase 1", "profitLink": "binance_opn_first_unlock.html" },
+        { "round": "第二次解锁", "daysFromTGE": 91, "period": "Phase 2", "profitLink": null }
       ]
     },
     {
